@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "^3.10.1",
-    "reactive-storage": "^2.0.5",
+    "reactive-storage": "2.x",
+    "react-announce": "0.x",
     "rx": "^4.0.7",
     "seamless-immutable": "^4.1.1"
   },

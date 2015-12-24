@@ -1,0 +1,21 @@
+{
+  "name": "react-announce-fetc",
+  "version": "0.0.11",
+  "description": "a react-announce declarative to create REST based data stores",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "author": "tusharmath@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^3.10.1",
+    "reactive-storage": "^2.0.5",
+    "rx": "^4.0.7",
+    "seamless-immutable": "^4.1.1"
+  },
+  "devDependencies": {
+    "ava": "^0.8.0"
+  },
+  "repository": "https://github.com/tusharmath/react-announce-fetch"
+}

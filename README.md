@@ -27,6 +27,7 @@ By default, the HTTP request is only made when there is a *real* change in the v
 
 ### Use with React
 
+
 ```javascript
 import {connect} from 'react-announce-connect'
 import {Component} from 'react'
@@ -43,4 +44,9 @@ Users extends Component {
   }
 }
 
+// Keep refresh the user store every second.
+setInterval(() => users.reload(), 1000)
+
 ```
+
+In the above example, the users store would keep getting refereshed every second and the `Users` component would automatically get updated as soon as a new value would be received.

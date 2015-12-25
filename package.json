@@ -18,5 +18,24 @@
   "devDependencies": {
     "ava": "^0.8.0"
   },
-  "repository": "https://github.com/tusharmath/react-announce-fetch"
+  "repository": "https://github.com/tusharmath/react-announce-fetch",
+  "keywords": [
+    "decorators",
+    "declarative",
+    "react",
+    "rx",
+    "observable",
+    "stream",
+    "framework",
+    "announce",
+    "state",
+    "merge",
+    "extension",
+    "plugin",
+    "sync",
+    "http",
+    "rest",
+    "store",
+    "shared"
+  ]
 }

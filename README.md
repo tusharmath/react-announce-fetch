@@ -23,7 +23,7 @@ const users = createDataStore(searchParams.map(requestParams))
 
 In this case `users`, exposes primarly two methods `getStream()` and `reload()`. The `getStream()` method exposes the data inside the store which is basically the HTTP Response, of the request made to `/api/users` — as a stream.
 
-By default, the HTTP request is only made when there is a change in the values emitted by the `requestParams`. Change detection is done internally by transforming the request into an  [seamless-immutable](https://github.com/rtfeldman/seamless-immutable) object. Sometimes, it required to reload the store whenever, manually. For instance soon after creating a new user object, you might want to get the list of the users again, even though the request object is still the same.
+By default, the HTTP request is only made when there is a *real* change in the values emitted by the `requestParams`, *Change detection is done using strict equal to operator — `===`*. Sometimes, it is still required to reload the store, manually. For instance soon after creating a new user object, you might want to get the list of the users again, even though the request hasn't emitted a new value.
 
 ### Use with React
 

@@ -63,7 +63,7 @@ test('distinctChanges', t => {
   ])
 })
 
-test('reload', t => {
+test('reload:hydrated', t => {
   const fetched = []
   const out = []
   const fetcher = x => {
@@ -91,6 +91,29 @@ test('reload', t => {
     1004,
     1004
   ])
+})
+
+test('reload:unhydrated', t => {
+  const fetched = []
+  const out = []
+  const fetcher = x => {
+    fetched.push(x)
+    return Observable.just(x.a + 1000)
+  }
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(210, {a: 1}),
+    onNext(212, {a: 2}),
+    onNext(213, {a: 3}),
+    onNext(214, {a: 3}),
+    onNext(215, null),
+    onNext(216, {a: 4})
+  )
+  const store = createDataStore(paramsStream, fetcher)
+  store.getStream().subscribe(x => out.push(x))
+  scheduler.startScheduler(() => paramsStream)
+  store.reload()
+  t.same(out, [])
 })
 
 test('hydrated', t => {

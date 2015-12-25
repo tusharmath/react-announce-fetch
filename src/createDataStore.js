@@ -12,6 +12,7 @@ const createStoreAsStream = require('reactive-storage').createStoreAsStream
 module.exports = function (stream, fetcher) {
   const response = new Subject()
   const reload = new Subject()
+  const state = new Subject()
   const hydrate = createStoreAsStream(0)
   const store = createStoreAsStream(new Immutable({}))
   stream
@@ -23,10 +24,13 @@ module.exports = function (stream, fetcher) {
     .filter(x => x.b > 0)
     .map(x => x.a)
     .combineLatest(reload.startWith(null), _.identity)
+    .tap(x => state.onNext({state: 'BEGIN', meta: x}))
     .flatMap(fetcher)
+    .tap(x => state.onNext({state: 'END', meta: x}))
     .subscribe(response)
   return {
-    getStream: () => response,
+    getDataStream: () => response,
+    getStateStream: () => state,
     hydrate: x => hydrate.update(v => v + x),
     reload: () => reload.onNext(null)
   }

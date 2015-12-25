@@ -36,6 +36,7 @@
     "http",
     "rest",
     "store",
-    "shared"
+    "shared",
+    "fetch"
   ]
 }

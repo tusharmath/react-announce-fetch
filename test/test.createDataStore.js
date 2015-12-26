@@ -144,7 +144,7 @@ test('getStateStream', t => {
   ])
 })
 
-test('intial value', t => {
+test('initial value', t => {
   const out = []
   const fetcher = x => Observable.just(x.a + 1000)
   const scheduler = new TestScheduler()

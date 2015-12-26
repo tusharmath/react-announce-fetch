@@ -3,7 +3,6 @@
  */
 'use strict'
 
-const Immutable = require('seamless-immutable')
 const Rx = require('rx')
 const _ = require('lodash')
 const createStoreAsStream = require('reactive-storage').createStoreAsStream

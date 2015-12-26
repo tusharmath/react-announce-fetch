@@ -35,7 +35,7 @@ import {Component} from 'react'
 
 // users data store can be used like any other stream via the connect module
 @connect({users: users.getDataStream()})
-@hydrate([users])
+@hydrate({stores:[users]})
 Users extends Component {
   render () {
     return (

@@ -6,20 +6,15 @@
 const Immutable = require('seamless-immutable')
 const Rx = require('rx')
 const _ = require('lodash')
-const Subject = Rx.Subject
 const createStoreAsStream = require('reactive-storage').createStoreAsStream
 
-module.exports = function (stream, fetcher) {
-  const response = new Subject()
-  const reload = new Subject()
-  const state = new Subject()
+module.exports = function (requestStream, initialValue, fetcher) {
+  const response = new Rx.BehaviorSubject(initialValue)
+  const reload = new Rx.Subject()
+  const state = new Rx.Subject()
   const hydrate = createStoreAsStream(0)
-  const store = createStoreAsStream(new Immutable({}))
-  stream
+  requestStream
     .filter(Boolean)
-    .subscribe(x => store.update(y => y.merge(x)))
-  store
-    .getStream()
     .combineLatest(hydrate.getStream(), (a, b) => ({a, b}))
     .filter(x => x.b > 0)
     .map(x => x.a)

@@ -6,7 +6,7 @@
 
 import test from 'ava'
 import createDataStore from '../src/createDataStore'
-import {ReactiveTest, TestScheduler, Observable} from 'rx'
+import { ReactiveTest, TestScheduler, Observable } from 'rx'
 const {onNext} = ReactiveTest
 test(t => {
   const fetched = []
@@ -23,39 +23,12 @@ test(t => {
     onNext(210, null),
     onNext(210, {a: 4})
   )
-  const store = createDataStore(paramsStream, fetcher)
+  const store = createDataStore(paramsStream, {}, fetcher)
   store.hydrate(1)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
-    1001,
-    1002,
-    1003,
-    1004
-  ])
-})
-
-test('distinctChanges', t => {
-  const fetched = []
-  const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
-  const scheduler = new TestScheduler()
-  const paramsStream = scheduler.createHotObservable(
-    onNext(210, {a: 1}),
-    onNext(212, {a: 2}),
-    onNext(213, {a: 3}),
-    onNext(214, {a: 3}),
-    onNext(215, null),
-    onNext(216, {a: 4})
-  )
-  const store = createDataStore(paramsStream, fetcher)
-  store.hydrate(1)
-  store.getDataStream().subscribe(x => out.push(x))
-  scheduler.startScheduler(() => paramsStream)
-  t.same(out, [
+    {},
     1001,
     1002,
     1003,
@@ -64,12 +37,8 @@ test('distinctChanges', t => {
 })
 
 test('reload:hydrated', t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
+  const fetcher = x => Observable.just(x.a + 1000)
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
     onNext(210, {a: 1}),
@@ -79,14 +48,16 @@ test('reload:hydrated', t => {
     onNext(215, null),
     onNext(216, {a: 4})
   )
-  const store = createDataStore(paramsStream, fetcher)
-  store.hydrate(1)
+  const store = createDataStore(paramsStream, {}, fetcher)
   store.getDataStream().subscribe(x => out.push(x))
+  store.hydrate(1)
   scheduler.startScheduler(() => paramsStream)
   store.reload()
   t.same(out, [
+    {},
     1001,
     1002,
+    1003,
     1003,
     1004,
     1004
@@ -109,11 +80,11 @@ test('reload:unhydrated', t => {
     onNext(215, null),
     onNext(216, {a: 4})
   )
-  const store = createDataStore(paramsStream, fetcher)
+  const store = createDataStore(paramsStream, {}, fetcher)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.reload()
-  t.same(out, [])
+  t.same(out, [{}])
 })
 
 test('hydrated', t => {
@@ -132,11 +103,11 @@ test('hydrated', t => {
     onNext(215, null),
     onNext(216, {a: 4})
   )
-  const store = createDataStore(paramsStream, fetcher)
+  const store = createDataStore(paramsStream, {}, fetcher)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.hydrate(1)
-  t.same(out, [1004])
+  t.same(out, [{}, 1004])
 })
 
 test('getStateStream', t => {
@@ -155,7 +126,7 @@ test('getStateStream', t => {
     onNext(215, null),
     onNext(216, {a: 4})
   )
-  const store = createDataStore(paramsStream, fetcher)
+  const store = createDataStore(paramsStream, {}, fetcher)
   store.hydrate(1)
   store.getStateStream({}).subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
@@ -166,7 +137,28 @@ test('getStateStream', t => {
     {state: 'END', meta: 1002},
     {state: 'BEGIN', meta: {a: 3}},
     {state: 'END', meta: 1003},
+    {state: 'BEGIN', meta: {a: 3}},
+    {state: 'END', meta: 1003},
     {state: 'BEGIN', meta: {a: 4}},
     {state: 'END', meta: 1004}
+  ])
+})
+
+test('intial value', t => {
+  const out = []
+  const fetcher = x => Observable.just(x.a + 1000)
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(210, {a: 1}),
+    onNext(212, {a: 2})
+  )
+  const store = createDataStore(paramsStream, 999, fetcher)
+  store.hydrate(1)
+  store.getDataStream().subscribe(x => out.push(x))
+  scheduler.startScheduler(() => paramsStream)
+  t.same(out, [
+    999,
+    1001,
+    1002
   ])
 })

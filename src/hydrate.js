@@ -4,11 +4,11 @@
 
 'use strict'
 
-const createDeclaration = require('react-announce').createDeclaration
+const createDeclarative = require('react-announce').createDeclarative
 const _ = require('lodash')
 const Rx = require('rx')
 
-module.exports = createDeclaration(function (stream, dispose, params) {
+module.exports = createDeclarative(function (stream, dispose, params) {
   const mount = stream.filter(x => x.event === 'WILL_MOUNT').map(1)
   const unmount = stream.filter(x => x.event === 'WILL_UNMOUNT').map(-1)
   dispose(

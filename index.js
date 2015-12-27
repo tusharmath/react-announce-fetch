@@ -9,6 +9,6 @@ const fetchStream = require('./src/fetchStream')
 const hydrate = require('./src/hydrate')
 
 module.exports = {
-  createDataStore: _.partialRight(createDataStore, fetchStream),
+  createDataStore: (requestStream, initialValue) => createDataStore(requestStream, initialValue, fetchStream),
   hydrate
 }

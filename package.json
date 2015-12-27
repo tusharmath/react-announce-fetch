@@ -1,6 +1,6 @@
 {
   "name": "react-announce-fetch",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "a react-announce declarative to create REST based data stores",
   "main": "index.js",
   "scripts": {

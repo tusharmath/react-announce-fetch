@@ -16,8 +16,8 @@ module.exports = function (requestStream, initialValue, fetcher) {
   requestStream
     .filter(Boolean)
     .distinctUntilChanged(x => x, (a, b) => a === b)
-    .combineLatest(hydrate.getStream(), (a, b) => ({a, b}))
-    .filter(x => x.b > 0)
+    .combineLatest(hydrate.getStream().map(x => x > 0).distinctUntilChanged(), (a, b) => ({a, b}))
+    .filter(x => x.b)
     .map(x => x.a)
     .combineLatest(reload.startWith(null), _.identity)
     .tap(x => state.onNext({state: 'BEGIN', meta: x}))

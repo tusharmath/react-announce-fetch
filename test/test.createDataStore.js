@@ -162,3 +162,40 @@ test('initial value', t => {
     1002
   ])
 })
+
+test('distinct request', t => {
+  const out = []
+  const fetcher = x => Observable.just(x.a.aa + 1000)
+  const scheduler = new TestScheduler()
+  const val = [
+    {a: {aa: 0}},
+    {a: {aa: 1}},
+    {a: {aa: 2}},
+    {a: {aa: 3}},
+    {a: {aa: 4}},
+    {a: {aa: 4}}
+  ]
+
+  const paramsStream = scheduler.createHotObservable(
+    onNext(210, val[0]),
+    onNext(211, val[1]),
+    onNext(212, val[2]),
+    onNext(213, val[3]),
+    onNext(214, val[3]),
+    onNext(215, val[4]),
+    onNext(216, val[5])
+  )
+  const store = createDataStore(paramsStream, 9000, fetcher)
+  store.hydrate(1)
+  store.getDataStream().subscribe(x => out.push(x))
+  scheduler.startScheduler(() => paramsStream)
+  t.same(out, [
+    9000,
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1004
+  ])
+})

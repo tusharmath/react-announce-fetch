@@ -23,12 +23,11 @@ test(t => {
     onNext(210, null),
     onNext(210, {a: 4})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
+  const store = createDataStore(paramsStream, fetcher)
   store.hydrate(1)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
-    {},
     1001,
     1002,
     1003,
@@ -48,13 +47,12 @@ test('reload:hydrated', t => {
     onNext(215, null),
     onNext(216, {a: 4})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
+  const store = createDataStore(paramsStream, fetcher)
   store.getDataStream().subscribe(x => out.push(x))
   store.hydrate(1)
   scheduler.startScheduler(() => paramsStream)
   store.reload()
   t.same(out, [
-    {},
     1001,
     1002,
     1003,
@@ -80,11 +78,11 @@ test('reload:unhydrated', t => {
     onNext(215, null),
     onNext(216, {a: 4})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
+  const store = createDataStore(paramsStream, fetcher)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.reload()
-  t.same(out, [{}])
+  t.same(out, [])
 })
 
 test('hydrated', t => {
@@ -103,11 +101,11 @@ test('hydrated', t => {
     onNext(215, null),
     onNext(216, {a: 4})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
+  const store = createDataStore(paramsStream, fetcher)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.hydrate(1)
-  t.same(out, [{}, 1004])
+  t.same(out, [1004])
 })
 
 test('getStateStream', t => {
@@ -126,9 +124,9 @@ test('getStateStream', t => {
     onNext(215, null),
     onNext(216, {a: 4})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
+  const store = createDataStore(paramsStream, fetcher)
   store.hydrate(1)
-  store.getStateStream({}).subscribe(x => out.push(x))
+  store.getStateStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
     {state: 'BEGIN', meta: {a: 1}},
@@ -152,12 +150,11 @@ test('initial value', t => {
     onNext(210, {a: 1}),
     onNext(212, {a: 2})
   )
-  const store = createDataStore(paramsStream, 999, fetcher)
+  const store = createDataStore(paramsStream, fetcher)
   store.hydrate(1)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
-    999,
     1001,
     1002
   ])
@@ -185,12 +182,11 @@ test('distinct request', t => {
     onNext(215, val[4]),
     onNext(216, val[5])
   )
-  const store = createDataStore(paramsStream, 9000, fetcher)
+  const store = createDataStore(paramsStream, fetcher)
   store.hydrate(1)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
-    9000,
     1000,
     1001,
     1002,

@@ -7,5 +7,5 @@ module.exports = params => {
   const responseParams = ['body', 'bodyUsed', 'headers', 'ok', 'status', 'statusText', 'type', 'url']
   const selectResponseParams = _.partialRight(_.pick, responseParams)
   const parseJSON = x => Rx.Observable.fromPromise(x.json()).map(json => _.assign({json}, selectResponseParams))
-  return Rx.Observable.fromPromise(params.fetch(url, options)).flatMap(parseJSON)
+  return Rx.Observable.fromPromise(fetch(url, options)).flatMap(parseJSON)
 }

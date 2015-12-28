@@ -31,12 +31,12 @@ By default, the HTTP request is only made when there is a *real* change in the v
 
 ```javascript
 import {connect} from 'react-announce-connect'
-import {hydrate} from 'react-announce-fetch'
+import {hydrate} from 'react-announce-hydate'
 import {Component} from 'react'
 
 // users data store can be used like any other stream via the connect module
 @connect({users: users.getDataStream()})
-@hydrate({stores:[users]})
+@hydrate({[users.sync()]})
 Users extends Component {
   render () {
     return (
@@ -55,7 +55,7 @@ setInterval(() => users.reload(), 1000)
 In the above example, the users store would keep getting refereshed every second and the `Users` component together with the other components that are *connected* to `users.getDataStream()`, would automatically get updated as soon as a new value would be received.
 
 ### Hydration
-That setInterval is quite a cumbersome thing to manage. I need to be aware of if the `Users` component is mounted or not. If it isn't mounted then there is not point of keep making these HTTP requests. At the same time, I should also be aware of other components lifecycle, who are using the `users` data store. So that if any of them are in mounted state, I shall keep the setInterval going and as soon as none of them are in mounted state, I will clear the interval.
+That setInterval is quite a cumbersome thing to manage. I need to be aware of the `Users` component mounted state. If it isn't mounted then there is not point of keep making these HTTP requests. At the same time, I should also be aware of other components lifecycle, who are using the `users` data store. So that if any of them are in mounted state, I shall keep the setInterval going and as soon as none of them are in mounted state, I will clear the interval.
 
 The `@hydrate` decorator does exactly that. It takes in a list of data stores as a parameter, and restricts them from making HTTP requests if the components are unmounted.
 

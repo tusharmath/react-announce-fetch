@@ -222,3 +222,32 @@ test('distinct request', t => {
     1004
   ])
 })
+
+test('sync()', t => {
+  const out = []
+  const fetcher = x => Observable.just(x + 1000)
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(200, 10),
+    onNext(210, 11),
+    onNext(220, 12),
+    onNext(230, 13),
+    onNext(240, 13),
+    onNext(250, 14),
+    onNext(260, 15)
+  )
+  const store = createDataStore(paramsStream, 9000, fetcher)
+  store.getDataStream().subscribe(x => out.push(x))
+  const sync = store.sync()
+  sync.onNext({event: 'WILL_MOUNT'})
+  scheduler.advanceBy(235)
+  sync.onNext({event: 'WILL_UNMOUNT'})
+  scheduler.advanceBy(250)
+  t.same(out, [
+    9000,
+    1010,
+    1011,
+    1012,
+    1013
+  ])
+})

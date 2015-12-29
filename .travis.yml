@@ -6,11 +6,3 @@ cache:
   - node_modules
 before_script:
 - npm install -g ava
-deploy:
-  provider: npm
-  email: tusharmath@gmail.com
-  on:
-    tags: true
-    branch: master
-  api_key:
-    secure: DaovtJfDo/ZashEWbVnxThnM9WaK6RpPxOcGx3PzpAkwoI2+G5CyXAgcTYk1yiQAF0w7noh1LjpD9kFAWKpcZTIA0ijPvwd74sSvKdM6O/LGbi741Yv1Vjo49powX/U8qXQQoHKYkLx3hW97BVpuJ03iV4C6Z9PVWDbMkg2JJIXIp4UYlnRe96Wdnm5Leto+vG1I5PAZe+QyvBuYcbXWAORp2pgxUARMUQQqjPjonl+LTDdLEwstEIDWpf1MZOi1H3Tl3seHjiefABN5xwPU+ujlqxW7f7Kh+U0rNWgufcJUbdmARyHoCte9dAlW7ORaPsLM2D2aGeTmkhRWJEF/NEUh1otSryCvRa7dhf7cT0A6O/gDen4Lk+ZFjB2cF58QWvfHk9CVi2pZurBf7NMyzz8sQcWHBzzG81kae+RHHGCz54zSHnoHn6qAE8PStKcwHAr8zJ6PmLzmoJQBbxM0PHOTVS0qmR1BwKtWaOxZOj9FMl3MkBDV3ivbGwv/LcxNcCzH83WM3w1N7VVxkI75nUNPM85aml1Xz84qi+ro47zb8kNZs0mqCVFACgScAfOicVReRhz3xunGaqU3QgOQGt1enyHAujhnrWCHn+lCJ2dLWMWLIEUwflRxFoAfd3eo/7P0h8SGwmIXP9Qa8UZl307S06NGIqPXAnVGgdXg24A=

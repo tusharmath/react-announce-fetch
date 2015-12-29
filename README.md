@@ -62,7 +62,7 @@ The `@hydrate` decorator does exactly that. It takes in a list of data stores as
 ### getStateStream()
 It's purpose is to expose a stream that emits a value `BEGIN` just before the HTTP request is being made and `END` once the api request is complete. This is pretty useful when you want to show a loader until the data received.
 
-```
+```javascript
 
 users.getStateStream(x => console.log(x))
 

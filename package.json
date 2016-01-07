@@ -1,17 +1,16 @@
 {
   "name": "react-announce-fetch",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "a react-announce declarative to create REST based data stores",
   "main": "index.js",
   "scripts": {
-    "test": "ava"
+    "test": "node_modules/ava/cli.js"
   },
   "author": "tusharmath@gmail.com",
   "license": "ISC",
   "dependencies": {
     "lodash": "^3.10.1",
-    "reactive-storage": "2.x",
-    "react-announce": "0.x",
+    "reactive-storage": "0.x",
     "rx": "^4.0.7"
   },
   "devDependencies": {

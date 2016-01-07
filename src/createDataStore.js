@@ -5,7 +5,7 @@
 
 const Rx = require('rx')
 const _ = require('lodash')
-const createStoreAsStream = require('reactive-storage').createStoreAsStream
+const createStoreAsStream = require('reactive-storage').createStoreStream
 
 // TODO: Remove initial value. Startwith is a good alternative to use
 module.exports = function (requestStream, initialValue, fetcher) {
@@ -17,7 +17,7 @@ module.exports = function (requestStream, initialValue, fetcher) {
   Rx.Observable.merge(
     lifeCycleObserver.filter(x => x.event === 'WILL_MOUNT').map(1),
     lifeCycleObserver.filter(x => x.event === 'WILL_UNMOUNT').map(-1)
-  ).subscribe(x => hydrate.update(store => store + x))
+  ).subscribe(x => hydrate.set(store => store + x))
 
   requestStream
     .filter(Boolean)
@@ -34,7 +34,7 @@ module.exports = function (requestStream, initialValue, fetcher) {
   return {
     getDataStream: () => response,
     getStateStream: () => state,
-    hydrate: x => hydrate.update(v => v + x),
+    hydrate: x => hydrate.set(v => v + x),
     reload: () => reload.onNext(null),
     sync: () => lifeCycleObserver
   }

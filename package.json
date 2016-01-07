@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "^3.10.1",
-    "reactive-storage": "*",
+    "reactive-storage": "0.x",
     "rx": "^4.0.7"
   },
   "devDependencies": {

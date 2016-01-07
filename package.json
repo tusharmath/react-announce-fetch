@@ -4,7 +4,7 @@
   "description": "a react-announce declarative to create REST based data stores",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/ava/cli.js"
+    "test": "ava"
   },
   "author": "tusharmath@gmail.com",
   "license": "ISC",

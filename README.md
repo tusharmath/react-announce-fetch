@@ -1,4 +1,4 @@
-# react-announce-fetch[![Build Status](https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master)](https://travis-ci.org/tusharmath/react-announce-fetch) [![npm](https://img.shields.io/npm/v/reactive-storage.svg)]()
+# react-announce-fetch[![Build Status](https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master)](https://travis-ci.org/tusharmath/react-announce-fetch) [![npm](https://img.shields.io/npm/v/react-announce-fetch.svg)]()
 a [react-announce](https://github.com/tusharmath/react-announce) declarative to create REST based data stores
 
 ### Installation

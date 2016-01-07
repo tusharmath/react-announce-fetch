@@ -4,5 +4,10 @@ node_js:
 cache:
   directories:
   - node_modules
-before_script:
-- npm install -g ava
+deploy:
+  on:
+    branch: master
+  provider: npm
+  email: tusharmath@gmail.com
+  api_key:
+    secure: EODNXHDmSaVaG32/iCH0BzPB1hpvoqcG43cwGXOK/6/NVPkdcRZxfkxbiGG/ljVsChTUYqPSGSWVSqsqX5QxRGi5n9wdmjzAc/nKPwMY56gRpPNRXBOzj4tonELzifnAnkyWXNMcHeHj96qOeRjAs7mkJiBhx3xZbg5wo9Ku1zfaE1zVU4gF3tTxYhRwsVLjFbIYkRW8R9kxxmOsBSrjG070xIrLTpGAVfpYIv6uhxcVdbyCT5IaHAid+ut5GOwzic+/5hjRq3Muj9i0B8OLUSrg82MgB3EP2h1or8V9G0wtcy/P2nWRdtmeiYmt+djS+u16z6jgPPG9cv/ZLVm9GUSyFKnWONJM78FbsJrhtmL9o+GgVln5rgzKFpaS/UiqmxSVXzmow0tEh0cAFcp0GpSZnJI7IzewkH46NbgQVGTOOFLOf+CLqBw4oELzb1idAyX1MoKspY+uutx0UqoSqfjx91UhxjuHCIbEIabSykxvfUJRTxXud/kF9WxWae43e2MQaclWkhWcIZvDpqWpSJ20kOi+bv2p+LoacFHs1df/PbyxJsogwePru9i8bk53b/ska2zwHP5JrdPcQK7izwdfDi0+fFcOgBLefb3mc13ObCfEjudfFHqN4jm/kQgNgRL5uDvpqnn0Tt3PFAFrP1UEMZwvraw/c/przm7dg9U=

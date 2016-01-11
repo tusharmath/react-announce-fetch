@@ -33,6 +33,7 @@ module.exports = function (fetcher, requestStream, initialValue) {
     .subscribe(response)
   return {
     // TODO: expose getJSONStream
+    // TODO: Add dispose functionality
     getDataStream: () => response,
     getStateStream: () => state,
     hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),

@@ -110,6 +110,18 @@ test('hydrated', t => {
   t.same(out, [{}, 1004])
 })
 
+test('hydrated:no-param', t => {
+  const out = []
+  const fetcher = x => Observable.just(x.a + 1000)
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(onNext(210, {a: 1}))
+  const store = createDataStore(paramsStream, 1000, fetcher)
+  store.getDataStream().subscribe(x => out.push(x))
+  store.hydrate()
+  scheduler.startScheduler(() => paramsStream)
+  t.same(out, [1000, 1001])
+})
+
 test('no fetch on increase in hydration', t => {
   const fetched = []
   const out = []

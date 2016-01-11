@@ -32,9 +32,10 @@ module.exports = function (requestStream, initialValue, fetcher) {
     .tap(x => state.onNext({state: 'END', meta: x}))
     .subscribe(response)
   return {
+    // TODO: expose getJSONStream
     getDataStream: () => response,
     getStateStream: () => state,
-    hydrate: x => hydrate.set(v => v + x),
+    hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),
     reload: () => reload.onNext(null),
     sync: () => lifeCycleObserver
   }

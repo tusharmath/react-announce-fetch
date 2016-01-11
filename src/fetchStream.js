@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Rx = require('rx')
 
 // TODO: Add unit tests
+// Pass window.fetch as an argument or set it as a static property
 module.exports = params => {
   const url = params.url
   const options = _.omit(params, 'url')

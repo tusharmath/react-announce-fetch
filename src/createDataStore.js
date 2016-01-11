@@ -8,7 +8,7 @@ const _ = require('lodash')
 const createStoreStream = require('reactive-storage').createStoreStream
 
 // TODO: Remove initial value. Startwith is a good alternative to use
-module.exports = function (fetcher, requestStream, initialValue) {
+module.exports = function (fetch, requestStream, initialValue) {
   const lifeCycleObserver = new Rx.Subject()
   const response = new Rx.BehaviorSubject(initialValue)
   const reload = new Rx.Subject()
@@ -29,12 +29,15 @@ module.exports = function (fetcher, requestStream, initialValue) {
     .combineLatest(reload.startWith(null), _.identity)
     .tap(x => state.onNext({state: 'BEGIN', meta: x}))
     .flatMap(fetcher)
+    .flatMap(fetch)
     .tap(x => state.onNext({state: 'END', meta: x}))
     .subscribe(response)
   return {
     // TODO: expose getJSONStream
     // TODO: Add dispose functionality
     getDataStream: () => response,
+    getResponseStream: () => response,
+    getJSONStream: () => response.flatMap(parseJSON),
     getStateStream: () => state,
     hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),
     reload: () => reload.onNext(null),

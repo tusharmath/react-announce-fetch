@@ -3,9 +3,13 @@
  */
 'use strict'
 
+const _ = require('lodash')
 const createDataStore = require('./src/createDataStore')
-const fetchStream = require('./src/fetchStream')
 
+var create = _.partial(createDataStore, window.fetch)
 module.exports = {
-  createDataStore: (requestStream, initialValue) => createDataStore(fetchStream, requestStream, initialValue)
+  // TODO: Update documentation
+  create,
+  // Alias for legacy purposes
+  createDataStore
 }

@@ -8,5 +8,5 @@ const createDataStore = require('./src/createDataStore')
 const fetchStream = require('./src/fetchStream')
 
 module.exports = {
-  createDataStore: (requestStream, initialValue) => createDataStore(requestStream, initialValue, fetchStream)
+  createDataStore: (requestStream, initialValue) => createDataStore(fetchStream, requestStream, initialValue)
 }

@@ -8,13 +8,15 @@ import test from 'ava'
 import createDataStore from '../src/createDataStore'
 import { ReactiveTest, TestScheduler, Observable } from 'rx'
 const {onNext} = ReactiveTest
+
+var fetched = []
+const fetcher = x => {
+  fetched.push(x)
+  return Observable.just(x.a + 1000)
+}
+test.beforeEach(() => fetched = [])
 test(t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
     onNext(210, {a: 1}),
@@ -65,12 +67,7 @@ test('reload:hydrated', t => {
 })
 
 test('reload:unhydrated', t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
     onNext(210, {a: 1}),
@@ -88,12 +85,7 @@ test('reload:unhydrated', t => {
 })
 
 test('hydrated', t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
     onNext(210, {a: 1}),
@@ -123,12 +115,7 @@ test('hydrated:no-param', t => {
 })
 
 test('no fetch on increase in hydration', t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
     onNext(200, {a: 1}),
@@ -146,12 +133,7 @@ test('no fetch on increase in hydration', t => {
 })
 
 test('getStateStream', t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
     onNext(210, {a: 1}),

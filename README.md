@@ -7,22 +7,33 @@ npm install react-announce-fetch --save
 ```
 
 ### Usage
-This module exposes an API `createDataStore()` to create shared data stores with multiple components. It also makes sure that the stores are hydrated *whenever* the search params change and *only when* the linked components are mounted.
+This module exposes an API `create()` to create data stores that can be shared across multiple components. It also makes sure that the stores are hydrated *whenever* the search params change and *only when* the linked components in mounted state.
 
 ### Create a data store
-This can be done using the factory method — `createDataStore()`. It takes in only one param, which represents the request stream. The stream must emit notifications constaining all the props required by the [fetch](https://github.com/github/fetch) api —
+This can be done using the factory method — `create()`. It takes in only one param, which represents the request stream. The stream must emit notifications containing all the props required by the [fetch](https://github.com/github/fetch) api —
+
+**Sample Schema**
+```javascript
+{
+  url: `/api/users`,
+  method: `POST` // Defaults to get
+  body: JSON.stringify({name: 'Godzilla!', age: 390})
+}
+```
+
+### Usage
 
 ```javascript
-import {createDataStore} from 'react-announce-fetch'
+import {create} from 'react-announce-fetch'
 import {BehaviorSubject} from 'rx'
 
 const requestParams = new BehaviorSubject({url: '/api/users'})
 const initialValue = {users: [], page: 0}
-const users = createDataStore(searchParams.map(requestParams), initialValue) //Optional initial value for the store
+const users = create(searchParams.map(requestParams))
 ```
 
 
-In this case `users`, exposes primarily two methods `getDataStream()` and `reload()`. The `getDataStream()` method exposes the data inside the store which is basically the HTTP Response, of the request made to `/api/users` — as a stream.
+In this case `users`, exposes primarily two methods `getResponseStream()` and `reload()`. The `getDataStream()` method exposes the data inside the store which is basically the HTTP Response, of the request made to `/api/users` — as a stream.
 
 By default, the HTTP request is only made when there is a *real* change in the values emitted by the `requestParams`, *Change detection is done using strict equal to operator — `===`*. Sometimes, it is still required to reload the store, manually. For instance soon after creating a new user object, you might want to get the list of the users again, even though the request hasn't emitted a new value.
 

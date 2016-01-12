@@ -248,12 +248,3 @@ test('fetch:url+options', t => {
 
   t.same(out, [3010, 4011])
 })
-
-// TODO: Remove
-test.cb('YANKIE', t => {
-  t.plan(3)
-  setTimeout(() => {
-    // t.pass()
-    // t.end()
-  }, 100)
-})

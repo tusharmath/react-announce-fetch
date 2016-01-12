@@ -19,7 +19,7 @@ module.exports = function (fetch, requestStream) {
     lifeCycleObserver.filter(x => x.event === 'WILL_UNMOUNT').map(-1)
   ).subscribe(x => hydrate.set(store => store + x))
 
-  requestStream
+  const disposable = requestStream
     .filter(Boolean)
     .distinctUntilChanged(x => x, (a, b) => a === b)
     .combineLatest(hydrate.getStream(), (a, b) => ({a, b}))
@@ -35,14 +35,15 @@ module.exports = function (fetch, requestStream) {
     .tap(x => state.onNext('END'))
     .subscribe(response)
   return {
-    // TODO: expose getJSONStream
-    // TODO: Add dispose functionality
     getDataStream: () => response,
     getResponseStream: () => response,
+    // TODO: expose getJSONStream (TEST)
     getJSONStream: () => response.flatMap(parseJSON),
     getStateStream: () => state,
     hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),
     reload: () => reload.onNext(null),
-    sync: () => lifeCycleObserver
+    sync: () => lifeCycleObserver,
+    // TODO: Add dispose functionality (TEST)
+    dispose: () => disposable.dispose()
   }
 }

@@ -8,10 +8,9 @@ const _ = require('lodash')
 const createStoreStream = require('reactive-storage').createStoreStream
 const parseJSON = x => Rx.Observable.fromPromise(x.json())
 
-// TODO: Remove initial value. Startwith is a good alternative to use
-module.exports = function (fetch, requestStream, initialValue) {
+module.exports = function (fetch, requestStream) {
   const lifeCycleObserver = new Rx.Subject()
-  const response = new Rx.BehaviorSubject(initialValue)
+  const response = new Rx.Subject()
   const reload = new Rx.Subject()
   const state = new Rx.Subject()
   const hydrate = createStoreStream(0)

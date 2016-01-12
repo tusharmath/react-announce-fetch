@@ -27,7 +27,7 @@ test(t => {
     onNext(210, null),
     onNext(210, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.hydrate(1)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
@@ -51,7 +51,7 @@ test('reload:hydrated', t => {
     onNext(215, null),
     onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.getDataStream().subscribe(x => out.push(x))
   store.hydrate(1)
   scheduler.startScheduler(() => paramsStream)
@@ -77,7 +77,7 @@ test('reload:unhydrated', t => {
     onNext(215, null),
     onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.reload()
@@ -95,7 +95,7 @@ test('hydrated', t => {
     onNext(215, null),
     onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.hydrate(1)
@@ -107,7 +107,7 @@ test('hydrated:no-param', t => {
   const fetch = x => Observable.just(x.a + 1000)
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(onNext(210, {url: {a: 1}}))
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.getDataStream().subscribe(x => out.push(x))
   store.hydrate()
   scheduler.startScheduler(() => paramsStream)
@@ -121,7 +121,7 @@ test('no fetch on increase in hydration', t => {
     onNext(200, {url: {a: 1}}),
     onNext(212, {url: {a: 2}})
   )
-  const store = createDataStore(fetch, paramsStream, {})
+  const store = createDataStore(fetch, noop, paramsStream, {})
   store.getDataStream().subscribe(x => out.push(x))
   store.hydrate(1)
   scheduler.startScheduler(() => paramsStream)
@@ -143,7 +143,7 @@ test('getStateStream', t => {
     onNext(215, null),
     onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, paramsStream, {})
+  const store = createDataStore(fetch, noop, paramsStream, {})
   store.hydrate(1)
   store.getStateStream({}).subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
@@ -164,7 +164,7 @@ test('initial value', t => {
     onNext(210, {url: {a: 1}}),
     onNext(212, {url: {a: 2}})
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.hydrate(1)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
@@ -193,7 +193,7 @@ test('distinct request', t => {
     onNext(215, val[4]),
     onNext(216, val[5])
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.hydrate(1)
   store.getDataStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
@@ -220,7 +220,7 @@ test('sync()', t => {
     onNext(250, {url: 14}),
     onNext(260, {url: 15})
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.getDataStream().subscribe(x => out.push(x))
   const sync = store.sync()
   sync.onNext({event: 'WILL_MOUNT'})
@@ -243,7 +243,7 @@ test('fetch:url+options', t => {
     onNext(200, {url: 10, headers: 3}),
     onNext(210, {url: 11, headers: 4})
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.getDataStream().subscribe(x => out.push(x))
   store.hydrate()
   scheduler.startScheduler(() => paramsStream)
@@ -262,7 +262,7 @@ test('onCompleted()', t => {
     onCompleted(220),
     onNext(230, {url: 12, headers: 5})
   )
-  const store = createDataStore(fetch, paramsStream)
+  const store = createDataStore(fetch, noop, paramsStream)
   store.getResponseStream().subscribe(x => result.push(x), null, x => out.push('response-completed'))
   store.getStateStream().subscribe(noop, null, x => out.push('state-completed'))
   store.hydrate()

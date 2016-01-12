@@ -6,9 +6,8 @@
 const Rx = require('rx')
 const _ = require('lodash')
 const createStoreStream = require('reactive-storage').createStoreStream
-const parseJSON = x => Rx.Observable.fromPromise(x.json())
 
-module.exports = function (fetch, requestStream) {
+module.exports = function (fetch, parseJSON, requestStream) {
   const lifeCycleObserver = new Rx.Subject()
   const response = new Rx.Subject()
   const reload = new Rx.Subject()

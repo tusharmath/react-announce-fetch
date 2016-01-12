@@ -245,3 +245,23 @@ test('sync()', t => {
     1013
   ])
 })
+
+test('fetch:url+options', t => {
+  const out = []
+  const fetch = (x, y) => Observable.just(x + 1000 * y.headers)
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(200, {url: 10, headers: 3}),
+    onNext(210, {url: 11, headers: 4})
+  )
+  const store = createDataStore(fetch, paramsStream, 9000)
+  store.getDataStream().subscribe(x => out.push(x))
+  store.hydrate()
+  scheduler.startScheduler(() => paramsStream)
+
+  t.same(out, [
+    9000,
+    3010,
+    4011
+  ])
+})

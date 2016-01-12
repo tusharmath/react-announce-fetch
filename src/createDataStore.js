@@ -31,7 +31,7 @@ module.exports = function (fetch, requestStream, initialValue) {
     .tap(x => state.onNext({state: 'BEGIN'}))
     .flatMap(x => {
       const url = x.url
-      return fetch(url)
+      return fetch(url, _.omit(x, 'url'))
     })
     .tap(x => state.onNext({state: 'END'}))
     .subscribe(response)

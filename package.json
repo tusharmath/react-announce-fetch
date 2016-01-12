@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "ava": "^0.9.1",
+    "cz-conventional-changelog": "^1.1.5",
     "semantic-release": "^4.3.5"
   },
   "repository": {
@@ -40,5 +41,10 @@
     "store",
     "shared",
     "fetch"
-  ]
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }

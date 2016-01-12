@@ -148,16 +148,11 @@ test('getStateStream', t => {
   store.getStateStream({}).subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
-    {state: 'BEGIN'},
-    {state: 'END'},
-    {state: 'BEGIN'},
-    {state: 'END'},
-    {state: 'BEGIN'},
-    {state: 'END'},
-    {state: 'BEGIN'},
-    {state: 'END'},
-    {state: 'BEGIN'},
-    {state: 'END'}
+    'BEGIN', 'END',
+    'BEGIN', 'END',
+    'BEGIN', 'END',
+    'BEGIN', 'END',
+    'BEGIN', 'END'
   ])
 })
 

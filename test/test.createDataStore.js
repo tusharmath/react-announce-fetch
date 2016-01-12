@@ -7,28 +7,30 @@
 import test from 'ava'
 import createDataStore from '../src/createDataStore'
 import { ReactiveTest, TestScheduler, Observable } from 'rx'
-const {onNext} = ReactiveTest
+const {onNext, onCompleted} = ReactiveTest
+
+const noop = function () {
+}
+var fetched = []
+const fetch = x => {
+  fetched.push(x)
+  return Observable.just(x.a + 1000)
+}
+test.beforeEach(() => fetched = [])
 test(t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
-    onNext(210, {a: 1}),
-    onNext(210, {a: 2}),
-    onNext(210, {a: 3}),
+    onNext(210, {url: {a: 1}}),
+    onNext(210, {url: {a: 2}}),
+    onNext(210, {url: {a: 3}}),
     onNext(210, null),
-    onNext(210, {a: 4})
+    onNext(210, {url: {a: 4}})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
-  store.hydrate(1)
-  store.getDataStream().subscribe(x => out.push(x))
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
-    {},
     1001,
     1002,
     1003,
@@ -38,23 +40,21 @@ test(t => {
 
 test('reload:hydrated', t => {
   const out = []
-  const fetcher = x => Observable.just(x.a + 1000)
+  const fetch = x => Observable.just(x.a + 1000)
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
-    onNext(210, {a: 1}),
-    onNext(212, {a: 2}),
-    onNext(213, {a: 3}),
-    onNext(214, {a: 3}),
+    onNext(210, {url: {a: 1}}),
+    onNext(212, {url: {a: 2}}),
+    onNext(213, {url: {a: 3}}),
+    onNext(214, {url: {a: 3}}),
     onNext(215, null),
-    onNext(216, {a: 4})
+    onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
-  store.getDataStream().subscribe(x => out.push(x))
-  store.hydrate(1)
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.reload()
   t.same(out, [
-    {},
     1001,
     1002,
     1003,
@@ -65,138 +65,115 @@ test('reload:hydrated', t => {
 })
 
 test('reload:unhydrated', t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
-    onNext(210, {a: 1}),
-    onNext(212, {a: 2}),
-    onNext(213, {a: 3}),
-    onNext(214, {a: 3}),
+    onNext(210, {url: {a: 1}}),
+    onNext(212, {url: {a: 2}}),
+    onNext(213, {url: {a: 3}}),
+    onNext(214, {url: {a: 3}}),
     onNext(215, null),
-    onNext(216, {a: 4})
+    onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
-  store.getDataStream().subscribe(x => out.push(x))
+  const store = createDataStore(fetch, noop, paramsStream)
+  store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.reload()
-  t.same(out, [{}])
+  t.same(out, [])
 })
 
-test('hydrated', t => {
-  const fetched = []
+test('lazy component mounting', t => {
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
-    onNext(210, {a: 1}),
-    onNext(212, {a: 2}),
-    onNext(213, {a: 3}),
-    onNext(214, {a: 3}),
+    onNext(210, {url: {a: 1}}),
+    onNext(212, {url: {a: 2}}),
+    onNext(213, {url: {a: 3}}),
+    onNext(214, {url: {a: 3}}),
     onNext(215, null),
-    onNext(216, {a: 4})
+    onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
-  store.getDataStream().subscribe(x => out.push(x))
+  const store = createDataStore(fetch, noop, paramsStream)
+  store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
-  store.hydrate(1)
-  t.same(out, [{}, 1004])
+  store.getComponentLifeCycleObserver().onNext({event: `WILL_MOUNT`})
+  t.same(out, [1004])
+})
+
+test('hydrated:no-param', t => {
+  const out = []
+  const fetch = x => Observable.just(x.a + 1000)
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(onNext(210, {url: {a: 1}}))
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  store.getResponseStream().subscribe(x => out.push(x))
+  store.hydrate()
+  scheduler.startScheduler(() => paramsStream)
+  t.same(out, [1001])
 })
 
 test('no fetch on increase in hydration', t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
-    onNext(200, {a: 1}),
-    onNext(212, {a: 2})
+    onNext(200, {url: {a: 1}}),
+    onNext(212, {url: {a: 2}})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
-  store.getDataStream().subscribe(x => out.push(x))
-  store.hydrate(1)
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
-  store.hydrate(1)
-  store.hydrate(1)
-  store.hydrate(1)
 
-  t.same(out, [{}, 1001, 1002])
+  t.same(out, [1001, 1002])
 })
 
 test('getStateStream', t => {
-  const fetched = []
   const out = []
-  const fetcher = x => {
-    fetched.push(x)
-    return Observable.just(x.a + 1000)
-  }
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
-    onNext(210, {a: 1}),
-    onNext(212, {a: 2}),
-    onNext(213, {a: 3}),
-    onNext(214, {a: 3}),
+    onNext(210, {url: {a: 1}}),
+    onNext(212, {url: {a: 2}}),
+    onNext(213, {url: {a: 3}}),
+    onNext(214, {url: {a: 3}}),
     onNext(215, null),
-    onNext(216, {a: 4})
+    onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(paramsStream, {}, fetcher)
-  store.hydrate(1)
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
   store.getStateStream({}).subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
-    {state: 'BEGIN', meta: {a: 1}},
-    {state: 'END', meta: 1001},
-    {state: 'BEGIN', meta: {a: 2}},
-    {state: 'END', meta: 1002},
-    {state: 'BEGIN', meta: {a: 3}},
-    {state: 'END', meta: 1003},
-    {state: 'BEGIN', meta: {a: 3}},
-    {state: 'END', meta: 1003},
-    {state: 'BEGIN', meta: {a: 4}},
-    {state: 'END', meta: 1004}
+    'BEGIN', 'END',
+    'BEGIN', 'END',
+    'BEGIN', 'END',
+    'BEGIN', 'END',
+    'BEGIN', 'END'
   ])
 })
 
 test('initial value', t => {
   const out = []
-  const fetcher = x => Observable.just(x.a + 1000)
+  const fetch = x => Observable.just(x.a + 1000)
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
-    onNext(210, {a: 1}),
-    onNext(212, {a: 2})
+    onNext(210, {url: {a: 1}}),
+    onNext(212, {url: {a: 2}})
   )
-  const store = createDataStore(paramsStream, 999, fetcher)
-  store.hydrate(1)
-  store.getDataStream().subscribe(x => out.push(x))
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
-  t.same(out, [
-    999,
-    1001,
-    1002
-  ])
+  t.same(out, [1001, 1002])
 })
 
 test('distinct request', t => {
   const out = []
-  const fetcher = x => Observable.just(x.a.aa + 1000)
+  const fetch = x => Observable.just(x.a.aa + 1000)
   const scheduler = new TestScheduler()
   const val = [
-    {a: {aa: 0}},
-    {a: {aa: 1}},
-    {a: {aa: 2}},
-    {a: {aa: 3}},
-    {a: {aa: 4}},
-    {a: {aa: 4}}
+    {url: {a: {aa: 0}}},
+    {url: {a: {aa: 1}}},
+    {url: {a: {aa: 2}}},
+    {url: {a: {aa: 3}}},
+    {url: {a: {aa: 4}}},
+    {url: {a: {aa: 4}}}
   ]
 
   const paramsStream = scheduler.createHotObservable(
@@ -208,12 +185,10 @@ test('distinct request', t => {
     onNext(215, val[4]),
     onNext(216, val[5])
   )
-  const store = createDataStore(paramsStream, 9000, fetcher)
-  store.hydrate(1)
-  store.getDataStream().subscribe(x => out.push(x))
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
-    9000,
     1000,
     1001,
     1002,
@@ -225,29 +200,82 @@ test('distinct request', t => {
 
 test('sync()', t => {
   const out = []
-  const fetcher = x => Observable.just(x + 1000)
+  const fetch = x => Observable.just(x + 1000)
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(
-    onNext(200, 10),
-    onNext(210, 11),
-    onNext(220, 12),
-    onNext(230, 13),
-    onNext(240, 13),
-    onNext(250, 14),
-    onNext(260, 15)
+    onNext(200, {url: 10}),
+    onNext(210, {url: 11}),
+    onNext(220, {url: 12}),
+    onNext(230, {url: 13}),
+    onNext(240, {url: 13}),
+    onNext(250, {url: 14}),
+    onNext(260, {url: 15})
   )
-  const store = createDataStore(paramsStream, 9000, fetcher)
-  store.getDataStream().subscribe(x => out.push(x))
+  const store = createDataStore(fetch, noop, paramsStream)
+  store.getResponseStream().subscribe(x => out.push(x))
   const sync = store.sync()
   sync.onNext({event: 'WILL_MOUNT'})
   scheduler.advanceBy(235)
   sync.onNext({event: 'WILL_UNMOUNT'})
   scheduler.advanceBy(250)
   t.same(out, [
-    9000,
     1010,
     1011,
     1012,
     1013
   ])
+})
+
+test('fetch:url+options', t => {
+  const out = []
+  const fetch = (x, y) => Observable.just(x + 1000 * y.headers)
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(200, {url: 10, headers: 3}),
+    onNext(210, {url: 11, headers: 4})
+  )
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  store.getResponseStream().subscribe(x => out.push(x))
+  store.hydrate()
+  scheduler.startScheduler(() => paramsStream)
+
+  t.same(out, [3010, 4011])
+})
+
+test('onCompleted()', t => {
+  const out = []
+  const result = []
+  const fetch = (x, y) => Observable.just(x + 1000 * y.headers)
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(200, {url: 10, headers: 3}),
+    onNext(210, {url: 11, headers: 4}),
+    onCompleted(220),
+    onNext(230, {url: 12, headers: 5})
+  )
+  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  store.getResponseStream().subscribe(x => result.push(x), null, x => out.push('response-completed'))
+  store.getStateStream().subscribe(noop, null, x => out.push('state-completed'))
+  store.hydrate()
+  scheduler.startScheduler(() => paramsStream)
+
+  t.same(out, [
+    'response-completed',
+    'state-completed'
+  ])
+  t.same(result, [3010, 4011])
+})
+
+test('getJSONStream()', t => {
+  const out = []
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(210, {url: {a: 1}}),
+    onNext(210, {url: {a: 2}}),
+    onNext(210, {url: {a: 3}})
+  )
+  const store = createDataStore(fetch, x => [x + 10], paramsStream, {hot: true})
+  store.getJSONStream().subscribe(x => out.push(x))
+  scheduler.startScheduler(() => paramsStream)
+  t.same(out, [1011, 1012, 1013])
 })

@@ -7,19 +7,23 @@ const Rx = require('rx')
 const _ = require('lodash')
 const createStoreStream = require('reactive-storage').createStoreStream
 
-// TODO: Remove initial value. Startwith is a good alternative to use
-module.exports = function (requestStream, initialValue, fetcher) {
+module.exports = function (fetch, parseJSON, requestStream, _options) {
+  const options = _.defaults({}, _options, {hot: false})
   const lifeCycleObserver = new Rx.Subject()
-  const response = new Rx.BehaviorSubject(initialValue)
+  const response = new Rx.Subject()
   const reload = new Rx.Subject()
   const state = new Rx.Subject()
-  const hydrate = createStoreStream(0)
+  const hydrate = createStoreStream(options.hot ? 1 : 0)
   Rx.Observable.merge(
     lifeCycleObserver.filter(x => x.event === 'WILL_MOUNT').map(1),
     lifeCycleObserver.filter(x => x.event === 'WILL_UNMOUNT').map(-1)
   ).subscribe(x => hydrate.set(store => store + x))
 
-  requestStream
+  const disposable = requestStream
+    .doOnCompleted(() => {
+      response.onCompleted()
+      state.onCompleted()
+    })
     .filter(Boolean)
     .distinctUntilChanged(x => x, (a, b) => a === b)
     .combineLatest(hydrate.getStream(), (a, b) => ({a, b}))
@@ -27,15 +31,24 @@ module.exports = function (requestStream, initialValue, fetcher) {
     .map(x => x.a)
     .distinctUntilChanged(x => x, (a, b) => a === b)
     .combineLatest(reload.startWith(null), _.identity)
-    .tap(x => state.onNext({state: 'BEGIN', meta: x}))
-    .flatMap(fetcher)
-    .tap(x => state.onNext({state: 'END', meta: x}))
+    .tap(x => state.onNext('BEGIN'))
+    .flatMap(x => fetch(x.url, _.omit(x, 'url')))
+    .tap(x => state.onNext('END'))
     .subscribe(response)
+  const getResponseStream = () => response
+  const getComponentLifeCycleObserver = () => lifeCycleObserver
   return {
-    getDataStream: () => response,
+    // TODO: Deprecate Legacy API
+    getDataStream: getResponseStream,
+    sync: getComponentLifeCycleObserver,
+    hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),
+
+    getResponseStream,
+    getJSONStream: () => response.flatMap(parseJSON),
     getStateStream: () => state,
-    hydrate: x => hydrate.set(v => v + x),
     reload: () => reload.onNext(null),
-    sync: () => lifeCycleObserver
+    getComponentLifeCycleObserver,
+    // TODO: Add dispose functionality (TEST)
+    dispose: () => disposable.dispose()
   }
 }

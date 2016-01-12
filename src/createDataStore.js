@@ -6,6 +6,7 @@
 const Rx = require('rx')
 const _ = require('lodash')
 const createStoreStream = require('reactive-storage').createStoreStream
+const parseJSON = x => Rx.Observable.fromPromise(x.json())
 
 // TODO: Remove initial value. Startwith is a good alternative to use
 module.exports = function (fetch, requestStream, initialValue) {
@@ -27,10 +28,12 @@ module.exports = function (fetch, requestStream, initialValue) {
     .map(x => x.a)
     .distinctUntilChanged(x => x, (a, b) => a === b)
     .combineLatest(reload.startWith(null), _.identity)
-    .tap(x => state.onNext({state: 'BEGIN', meta: x}))
-    .flatMap(fetcher)
-    .flatMap(fetch)
-    .tap(x => state.onNext({state: 'END', meta: x}))
+    .tap(x => state.onNext({state: 'BEGIN'}))
+    .flatMap(x => {
+      const url = x.url
+      return fetch(url)
+    })
+    .tap(x => state.onNext({state: 'END'}))
     .subscribe(response)
   return {
     // TODO: expose getJSONStream

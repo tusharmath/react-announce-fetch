@@ -274,3 +274,18 @@ test('onCompleted()', t => {
   ])
   t.same(result, [3010, 4011])
 })
+
+test('getJSONStream()', t => {
+  const out = []
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(210, {url: {a: 1}}),
+    onNext(210, {url: {a: 2}}),
+    onNext(210, {url: {a: 3}})
+  )
+  const store = createDataStore(fetch, x => [x + 10], paramsStream)
+  store.hydrate(1)
+  store.getJSONStream().subscribe(x => out.push(x))
+  scheduler.startScheduler(() => paramsStream)
+  t.same(out, [1011, 1012, 1013])
+})

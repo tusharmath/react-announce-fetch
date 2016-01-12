@@ -37,7 +37,6 @@ module.exports = function (fetch, parseJSON, requestStream) {
   return {
     getDataStream: () => response,
     getResponseStream: () => response,
-    // TODO: expose getJSONStream (TEST)
     getJSONStream: () => response.flatMap(parseJSON),
     getStateStream: () => state,
     hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),

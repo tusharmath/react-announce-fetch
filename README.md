@@ -11,14 +11,6 @@ npm install react-announce-fetch --save
 ### Create a data store
 This can be done using the factory method — `create()`. It takes in only one param, which represents the request stream. The stream must emit notifications containing all the props required by the [fetch](https://github.com/github/fetch) api —
 
-**Sample Schema for Request Stream**
-```javascript
-{
-  url: `/api/users`,
-  method: `POST` // Defaults to get
-  body: JSON.stringify({name: 'Godzilla!', age: 390})
-}
-```
 
 ### Usage
 
@@ -62,9 +54,23 @@ END
 
 */
 
+## API create(observable, options)
+`create` takes in two parameters. An `observable` which basically is the request stream that emits notifications in the of following schema format —
+
+**Sample Schema for Request Stream**
+```javascript
+{
+  url: `/api/users`,
+  method: `POST` // Defaults to get
+  body: JSON.stringify({name: 'Godzilla!', age: 390})
+}
+```
+
+*options:* 
+- `hot`: `true|false` when true, the requests are immediately made and the store doesn't wait for any component to be mounted/unmounted.
 
 ```
-## API
+## API store.prototype
 - `getStateStream()` Exposes an observable that emits `BEGIN` when the request starts and `END` when it finishes.
 - `getResponseStream()` Exposes the response of the HTTP request that is made every time the request stream fires an event.
 - `getJSONStream()` Exposes the `json` data from the response stream.

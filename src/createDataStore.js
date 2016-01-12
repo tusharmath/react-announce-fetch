@@ -32,10 +32,7 @@ module.exports = function (fetch, requestStream) {
     .distinctUntilChanged(x => x, (a, b) => a === b)
     .combineLatest(reload.startWith(null), _.identity)
     .tap(x => state.onNext('BEGIN'))
-    .flatMap(x => {
-      const url = x.url
-      return fetch(url, _.omit(x, 'url'))
-    })
+    .flatMap(x => fetch(x.url, _.omit(x, 'url')))
     .tap(x => state.onNext('END'))
     .subscribe(response)
   return {

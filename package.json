@@ -1,10 +1,10 @@
 {
   "name": "react-announce-fetch",
-  "version": "0.0.14",
   "description": "a react-announce declarative to create REST based data stores",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/ava/cli.js --verbose"
+    "test": "node_modules/ava/cli.js --verbose",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "author": "tusharmath@gmail.com",
   "license": "ISC",
@@ -14,9 +14,13 @@
     "rx": "^4.0.7"
   },
   "devDependencies": {
-    "ava": "^0.9.1"
+    "ava": "^0.9.1",
+    "semantic-release": "^4.3.5"
   },
-  "repository": "https://github.com/tusharmath/react-announce-fetch",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tusharmath/react-announce-fetch.git"
+  },
   "keywords": [
     "decorators",
     "declarative",

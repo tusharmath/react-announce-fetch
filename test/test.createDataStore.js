@@ -7,8 +7,10 @@
 import test from 'ava'
 import createDataStore from '../src/createDataStore'
 import { ReactiveTest, TestScheduler, Observable } from 'rx'
-const {onNext} = ReactiveTest
+const {onNext, onCompleted} = ReactiveTest
 
+const noop = function () {
+}
 var fetched = []
 const fetch = x => {
   fetched.push(x)
@@ -247,4 +249,28 @@ test('fetch:url+options', t => {
   scheduler.startScheduler(() => paramsStream)
 
   t.same(out, [3010, 4011])
+})
+
+test('onCompleted()', t => {
+  const out = []
+  const result = []
+  const fetch = (x, y) => Observable.just(x + 1000 * y.headers)
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(200, {url: 10, headers: 3}),
+    onNext(210, {url: 11, headers: 4}),
+    onCompleted(220),
+    onNext(230, {url: 12, headers: 5})
+  )
+  const store = createDataStore(fetch, paramsStream)
+  store.getResponseStream().subscribe(x => result.push(x), null, x => out.push('response-completed'))
+  store.getStateStream().subscribe(noop, null, x => out.push('state-completed'))
+  store.hydrate()
+  scheduler.startScheduler(() => paramsStream)
+
+  t.same(out, [
+    'response-completed',
+    'state-completed'
+  ])
+  t.same(result, [3010, 4011])
 })

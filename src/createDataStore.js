@@ -20,6 +20,10 @@ module.exports = function (fetch, requestStream) {
   ).subscribe(x => hydrate.set(store => store + x))
 
   const disposable = requestStream
+    .doOnCompleted(() => {
+      response.onCompleted()
+      state.onCompleted()
+    })
     .filter(Boolean)
     .distinctUntilChanged(x => x, (a, b) => a === b)
     .combineLatest(hydrate.getStream(), (a, b) => ({a, b}))

@@ -248,4 +248,4 @@ test('fetch:url+options', t => {
 
   t.same(out, [3010, 4011])
 })
-})
+

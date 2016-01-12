@@ -14,7 +14,7 @@
     "rx": "^4.0.7"
   },
   "devDependencies": {
-    "ava": "^0.8.0"
+    "ava": "^0.9.1"
   },
   "repository": "https://github.com/tusharmath/react-announce-fetch",
   "keywords": [

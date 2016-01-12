@@ -1,18 +1,17 @@
 # react-announce-fetch[![Build Status](https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master)](https://travis-ci.org/tusharmath/react-announce-fetch) [![npm](https://img.shields.io/npm/v/react-announce-fetch.svg)]()
 a [react-announce](https://github.com/tusharmath/react-announce) declarative to create REST based data stores
 
+Enables developers to create a shared data resource that can be used by multiple components.
+
 ### Installation
 ```
 npm install react-announce-fetch --save
 ```
 
-### Usage
-This module exposes an API `create()` to create data stores that can be shared across multiple components. It also makes sure that the stores are hydrated *whenever* the search params change and *only when* the linked components in mounted state.
-
 ### Create a data store
 This can be done using the factory method — `create()`. It takes in only one param, which represents the request stream. The stream must emit notifications containing all the props required by the [fetch](https://github.com/github/fetch) api —
 
-**Sample Schema**
+**Sample Schema for Request Stream**
 ```javascript
 {
   url: `/api/users`,
@@ -25,28 +24,18 @@ This can be done using the factory method — `create()`. It takes in only one p
 
 ```javascript
 import {create} from 'react-announce-fetch'
-import {BehaviorSubject} from 'rx'
-
-const requestParams = new BehaviorSubject({url: '/api/users'})
-const initialValue = {users: [], page: 0}
-const users = create(searchParams.map(requestParams))
-```
-
-
-In this case `users`, exposes primarily two methods `getResponseStream()` and `reload()`. The `getDataStream()` method exposes the data inside the store which is basically the HTTP Response, of the request made to `/api/users` — as a stream.
-
-By default, the HTTP request is only made when there is a *real* change in the values emitted by the `requestParams`, *Change detection is done using strict equal to operator — `===`*. Sometimes, it is still required to reload the store, manually. For instance soon after creating a new user object, you might want to get the list of the users again, even though the request hasn't emitted a new value.
-
-### Use with React
-
-
-```javascript
 import {connect} from 'react-announce-connect'
 import {hydrate} from 'react-announce-hydate'
+
+import {BehaviorSubject} from 'rx'
 import {Component} from 'react'
 
+const requestStream = new BehaviorSubject({url: '/api/users'})
+const initialValue = {users: [], page: 0}
+const users = create(requestStream)
+
 // users data store can be used like any other stream via the connect module
-@connect({users: users.getDataStream()})
+@connect({users: users.getJSONStream()})
 @hydrate({[users.sync()]})
 Users extends Component {
   render () {
@@ -61,20 +50,8 @@ Users extends Component {
 // Keep refresh the user store every second.
 setInterval(() => users.reload(), 1000)
 
-```
 
-In the above example, the users store would keep getting refereshed every second and the `Users` component together with the other components that are *connected* to `users.getDataStream()`, would automatically get updated as soon as a new value would be received.
-
-### Hydration
-That setInterval is quite a cumbersome thing to manage. I need to be aware of the `Users` component mounted state. If it isn't mounted then there is not point of keep making these HTTP requests. At the same time, I should also be aware of other components lifecycle, who are using the `users` data store. So that if any of them are in mounted state, I shall keep the setInterval going and as soon as none of them are in mounted state, I will clear the interval.
-
-The `@hydrate` decorator does exactly that. It takes in a list of data stores as a parameter, and restricts them from making HTTP requests if the components are unmounted.
-
-### getStateStream()
-It's purpose is to expose a stream that emits a value `BEGIN` just before the HTTP request is being made and `END` once the api request is complete. This is pretty useful when you want to show a loader until the data received.
-
-```javascript
-
+// Get request state stream
 users.getStateStream(x => console.log(x))
 
 /*
@@ -85,4 +62,12 @@ END
 
 */
 
+
 ```
+## API
+- `getStateStream()` Exposes an observable that emits `BEGIN` when the request starts and `END` when it finishes.
+- `getResponseStream()` Exposes the response of the HTTP request that is made every time the request stream fires an event.
+- `getJSONStream()` Exposes the `json` data from the response stream.
+- `reload()` Forcefully refreshes the store. By default requests are only made when the request stream fires an event. In some cases one might want to manually refresh the store.
+- `dispose()` Observer to the request stream is cancelled.
+- `getComponentLifeCycleObserver()` Observer listens to the component life cycle stream. Compatable with events dispatched by [react-announce](https://github.com/tusharmath/react-announce#getcomponentstreamstream-observable-dispose-function)

@@ -53,6 +53,7 @@ BEGIN
 END
 
 */
+```
 
 ## API create(observable, options)
 `create` takes in two parameters. An `observable` which basically is the request stream that emits notifications in the of following schema format —
@@ -69,7 +70,6 @@ END
 *options:* 
 - `hot`: `true|false` when true, the requests are immediately made and the store doesn't wait for any component to be mounted/unmounted.
 
-```
 ## API store.prototype
 - `getStateStream()` Exposes an observable that emits `BEGIN` when the request starts and `END` when it finishes.
 - `getResponseStream()` Exposes the response of the HTTP request that is made every time the request stream fires an event.

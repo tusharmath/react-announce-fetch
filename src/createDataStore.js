@@ -7,12 +7,13 @@ const Rx = require('rx')
 const _ = require('lodash')
 const createStoreStream = require('reactive-storage').createStoreStream
 
-module.exports = function (fetch, parseJSON, requestStream) {
+module.exports = function (fetch, parseJSON, requestStream, _options) {
+  const options = _.defaults({}, _options, {hot: false})
   const lifeCycleObserver = new Rx.Subject()
   const response = new Rx.Subject()
   const reload = new Rx.Subject()
   const state = new Rx.Subject()
-  const hydrate = createStoreStream(0)
+  const hydrate = createStoreStream(options.hot ? 1 : 0)
   Rx.Observable.merge(
     lifeCycleObserver.filter(x => x.event === 'WILL_MOUNT').map(1),
     lifeCycleObserver.filter(x => x.event === 'WILL_UNMOUNT').map(-1)
@@ -34,14 +35,19 @@ module.exports = function (fetch, parseJSON, requestStream) {
     .flatMap(x => fetch(x.url, _.omit(x, 'url')))
     .tap(x => state.onNext('END'))
     .subscribe(response)
+  const getResponseStream = () => response
+  const getComponentLifeCycleObserver = () => lifeCycleObserver
   return {
-    getDataStream: () => response,
-    getResponseStream: () => response,
+    // TODO: Deprecate Legacy API
+    getDataStream: getResponseStream,
+    sync: getComponentLifeCycleObserver,
+    hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),
+
+    getResponseStream,
     getJSONStream: () => response.flatMap(parseJSON),
     getStateStream: () => state,
-    hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),
     reload: () => reload.onNext(null),
-    sync: () => lifeCycleObserver,
+    getComponentLifeCycleObserver,
     // TODO: Add dispose functionality (TEST)
     dispose: () => disposable.dispose()
   }

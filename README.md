@@ -9,7 +9,7 @@ npm install react-announce-fetch --save
 ```
 
 ### Create a data store
-This can be done using the factory method — `create()`. It takes in only one param, which represents the request stream. The stream must emit notifications containing all the props required by the [fetch](https://github.com/github/fetch) api —
+This can be done using the factory method — `create()`. It takes in only one param, which represents the request stream. The stream must emit notifications containing all the props required by the [fetch](https://github.com/github/fetch) api.
 
 
 ### Usage
@@ -28,7 +28,9 @@ const users = create(requestStream)
 
 // users data store can be used like any other stream via the connect module
 @connect({users: users.getJSONStream()})
-@hydrate({[users.sync()]})
+
+// Using @hydrate binds the store to the component's lifecycle events.  
+@hydrate({[users.getComponentLifeCycleObserver()]})
 Users extends Component {
   render () {
     return (
@@ -39,7 +41,7 @@ Users extends Component {
   }
 }
 
-// Keep refresh the user store every second.
+// Keep refreshing the user store every second. Store stops getting updated automatically when the component Users unmounts.
 setInterval(() => users.reload(), 1000)
 
 
@@ -55,8 +57,8 @@ END
 */
 ```
 
-## API create(observable, options)
-`create` takes in two parameters. An `observable` which basically is the request stream that emits notifications in the of following schema format —
+## API create(requestStream)
+`create` takes in an requestStream which is an `observable`, that emits notifications in the of following schema format —
 
 **Sample Schema for Request Stream**
 ```javascript
@@ -67,13 +69,24 @@ END
 }
 ```
 
-*options:* 
-- `hot`: `true|false` when true, the requests are immediately made and the store doesn't wait for any component to be mounted/unmounted.
-
 ## API store.prototype
 - `getStateStream()` Exposes an observable that emits `BEGIN` when the request starts and `END` when it finishes.
 - `getResponseStream()` Exposes the response of the HTTP request that is made every time the request stream fires an event.
-- `getJSONStream()` Exposes the `json` data from the response stream.
+- `getJSONStream()` Exposes the `json` data from the response stream (JSON parsing is async). 
 - `reload()` Forcefully refreshes the store. By default requests are only made when the request stream fires an event. In some cases one might want to manually refresh the store.
-- `dispose()` Observer to the request stream is cancelled.
-- `getComponentLifeCycleObserver()` Observer listens to the component life cycle stream. Compatable with events dispatched by [react-announce](https://github.com/tusharmath/react-announce#getcomponentstreamstream-observable-dispose-function)
+- `dispose()` Disposes the observer to the request stream. All future changes to the request stream are ignored.
+- `getComponentLifeCycleObserver()` Exposes an observer that listens to the component life cycle stream. This can be  use to create a `cold` data store. Compatable with events dispatched by [react-announce](https://github.com/tusharmath/react-announce#getcomponentstreamstream-observable-dispose-function)
+
+## Cold Data Stores
+The stores that only start refreshing themselves once they are hydrated via some component's lifecyle events. The main idea is that if the data store should not be making HTTP request and updating the state of an `UNMOUNTED` component with the response. So they remain dormant until a component starts listening to them.
+
+```javascript
+const store = create(new Rx.Observable.Subject())
+```
+
+## Hot Data Stores
+These stores just start firing HTTP requests and keep updating themselves whenever there is a notification from the requests stream. They are not linked to any component.
+
+```javascript
+const store = create(new Rx.Observable.Subject(), {hot: true})
+```

@@ -1,22 +1,6 @@
-sudo: false
 language: node_js
+node_js:
+  - 5.3
 cache:
   directories:
   - node_modules
-notifications:
-  email: false
-node_js:
-- '4'
-before_install:
-- npm i -g npm@^2.0.0
-before_script:
-- npm prune
-after_success:
-- npm run semantic-release
-branches:
-  except:
-  - /^v\d+\.\d+\.\d+$/
-env:
-  global:
-  - secure: rojxNuYMly/RS40gftlzJ3PIDMnwoEgHMNADGl5U0/GENOYVE2cT8ASq3Nb2iEFLN1c2aKuPb1u6gxYWly+u8GyuYenIVSBzirOPQbDpP5espI0zMZg3ODCcGEeYWmnKH+5oKohQAJfC6Tbd9xeECxEVL4VrrJ/QG71nxZnpJqRHYpu95xjUt2jZnuNlnTtVWpZrlKsCpW7680BxKs3dBGYKc+ivY9vAw4f9+Qbi1uwC7g7rM/jeOQoWjNIEyPa5aJcW+74lXGb/9t9et8O45MfHnDmFix8N348owuDOFBAqUkbHoz/GJ9m/ozJ878B2A0ZJAtGoFN5qKxlZRbVDM61aoUGqkNZRrxVZo9HIlpELPI68kdbI97eM+GsPCMtAVKTYFWSzp2ICxmaR2joAEDbQtw3F4vpCGsjNKKVntexf+0tfZmCBCZ3b3MtXZbtvAaQEG9bVmc50HtYbhSONu6UpHgjLCJcDJS3bNWZqjKS/qt9AmzN9NPiu90j+mMOTCjrsEte3mJ/sur5Pe3Qkw9auBGlEew7tVQIeovES6UX++QaxsWqak2qwMLCoUvslaIkTbWj73Ds1i96jtCOOn3l/6Q0gDtbxI3lZZ9cU6gpSIS1YNeF7m1w8Xtjdx/brDSiGMeRKqlS2ZwiX4vA8I6xbhX3i4VwerdsgoxTp2O0=
-  - secure: brsqAU8DuFp9dSuCVz9SBt9RJcDjt9Y2zOE5uJtyx9IFTL2Zxw4izGpM5pyFboE0dYQXMrw45DFacUzuDQfJdCUKxzQtROqXiGOtVbCpNHPOd8zYJL3bQC/FWh6mLmj7vYUg0PhTecwlhjQnSKxwYYUlLbtxFH3pII/EVAvXLzcNdPqGP7LwSWTSBREPhAMUQ+VmTEaGy2X4WEjNOipoVOmyjvwYZSQ5KJAi7x3SsHQO/7AP2GMbDDfrMMu7LWskhov69buK6FwfzxGml+dda+3yAptmb80xrIfl8tvxTZJ8BaTpd8eawQ82wDy2R6FujO6MhG/jv2J6cMygaSfIErqFr7kq9XPt8yk4DTzDETNtONFGWoPhHXoqRQCUWogh9D1UG8mwDFRQjc777gG8tvFXYiwva51tKgiJEQsThJbRTt4XySV6Y7ej/aGNKiZy7Z6HHsNr2cuvJhNIMOcnc0SZpvOgHJ0ls30VQg0gB/T7Fi1T0kFjXszH316vUunkTcrSurIaacQmWdZoVUnER9TT/C3UFXaxqL0D48K8lgphaV9g/ay8qUMPfMPyA70yz+5590s5j/BRVbv3J/ooOA+jV0BFgOvJ4Isx6Uf+YCJq/icQx3zpbLNrGkYZa210HIV4kzzI9uXc2PQxY15JNK6ibAgBYSoe8BrhSQ8A9/4=

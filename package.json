@@ -3,8 +3,7 @@
   "description": "a react-announce declarative to create REST based data stores",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/ava/cli.js --verbose",
-    "semantic-release": "semantic-release pre --verbose && npm publish && semantic-release post"
+    "test": "node_modules/ava/cli.js --verbose"
   },
   "author": "tusharmath@gmail.com",
   "license": "ISC",
@@ -14,9 +13,7 @@
     "rx": "^4.0.7"
   },
   "devDependencies": {
-    "ava": "^0.9.1",
-    "cz-conventional-changelog": "^1.1.5",
-    "semantic-release": "^4.3.5"
+    "ava": "^0.9.1"
   },
   "repository": {
     "type": "git",
@@ -41,10 +38,5 @@
     "store",
     "shared",
     "fetch"
-  ],
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  }
+  ]
 }

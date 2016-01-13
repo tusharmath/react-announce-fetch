@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node_modules/ava/cli.js --verbose",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre --verbose && npm publish && semantic-release post"
   },
   "author": "tusharmath@gmail.com",
   "license": "ISC",

@@ -1,6 +1,7 @@
 {
   "name": "react-announce-fetch",
   "description": "a react-announce declarative to create REST based data stores",
+  "version": "0.0.14",
   "main": "index.js",
   "scripts": {
     "test": "node_modules/ava/cli.js --verbose"

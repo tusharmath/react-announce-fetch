@@ -7,7 +7,7 @@ const Rx = require('rx')
 const _ = require('lodash')
 const createStoreStream = require('reactive-storage').createStoreStream
 
-module.exports = function (fetch, parseJSON, requestStream, _options) {
+module.exports = function (fetchAsObservable, parseJSON, requestStream, _options) {
   const options = _.defaults({}, _options, {hot: false})
   const lifeCycleObserver = new Rx.Subject()
   const response = new Rx.Subject()
@@ -32,7 +32,7 @@ module.exports = function (fetch, parseJSON, requestStream, _options) {
     .distinctUntilChanged(x => x, (a, b) => a === b)
     .combineLatest(reload.startWith(null), _.identity)
     .tap(x => state.onNext('BEGIN'))
-    .flatMap(x => fetch(x.url, _.omit(x, 'url')))
+    .flatMap(x => fetchAsObservable(x.url, _.omit(x, 'url')))
     .tap(x => state.onNext('END'))
     .subscribe(response)
   const getResponseStream = () => response

@@ -7,7 +7,7 @@ const _ = require('lodash')
 const Rx = require('rx')
 const createDataStore = require('./src/createDataStore')
 
-const fetch = x => Rx.Observable.fromPromise(window.fetch(x))
+const fetch = (url, options) => Rx.Observable.fromPromise(window.fetch(url, options))
 const parseJSON = x => Rx.Observable.fromPromise(x.json())
 var create = _.partial(createDataStore, fetch, parseJSON)
 module.exports = {

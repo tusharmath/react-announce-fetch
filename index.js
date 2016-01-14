@@ -11,8 +11,8 @@ const fetch = x => Rx.Observable.fromPromise(window.fetch(x))
 const parseJSON = x => Rx.Observable.fromPromise(x.json())
 var create = _.partial(createDataStore, fetch, parseJSON)
 module.exports = {
-  // TODO: Update documentation
   create,
   // Alias for legacy purposes
-  createDataStore
+  createDataStore: create,
+  createFetchStore: create
 }

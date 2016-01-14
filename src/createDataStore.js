@@ -44,7 +44,7 @@ module.exports = function (fetch, parseJSON, requestStream, _options) {
     hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),
 
     getResponseStream,
-    getJSONStream: () => response.flatMap(parseJSON),
+    getJSONStream: () => response.flatMap(parseJSON).share(),
     getStateStream: () => state,
     reload: () => reload.onNext(null),
     getComponentLifeCycleObserver,

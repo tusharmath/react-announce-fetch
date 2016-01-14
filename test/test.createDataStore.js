@@ -279,3 +279,18 @@ test('getJSONStream()', t => {
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [1011, 1012, 1013])
 })
+
+test('getJSONStream():parseJSON called once', t => {
+  var out = 0
+  const scheduler = new TestScheduler()
+  const paramsStream = scheduler.createHotObservable(
+    onNext(210, {url: {a: 1}}), onNext(210, {url: {a: 2}}), onNext(210, {url: {a: 3}})
+  )
+  var parseJSON = () => [out++]
+  const store = createDataStore(fetch, parseJSON, paramsStream, {hot: true})
+  const jsonStream = store.getJSONStream()
+  jsonStream.subscribe(noop)
+  jsonStream.subscribe(noop)
+  scheduler.startScheduler(() => paramsStream)
+  t.same(out, 3)
+})

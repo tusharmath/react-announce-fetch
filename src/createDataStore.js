@@ -4,11 +4,14 @@
 'use strict'
 
 const Rx = require('rx')
-const _ = require('lodash')
 const createStoreStream = require('reactive-storage').createStoreStream
-
+const omit = (obj, keys) => {
+  const out = Object.assign({}, obj)
+  keys.forEach(x => delete out[x])
+  return out
+}
 module.exports = function (fetchAsObservable, parseJSON, requestStream, _options) {
-  const options = _.defaults({}, _options, {hot: false})
+  const options = Object.assign({hot: false}, _options)
   const lifeCycleObserver = new Rx.Subject()
   const response = new Rx.Subject()
   const reload = new Rx.Subject()
@@ -30,9 +33,9 @@ module.exports = function (fetchAsObservable, parseJSON, requestStream, _options
     .filter(x => x.b)
     .map(x => x.a)
     .distinctUntilChanged(x => x, (a, b) => a === b)
-    .combineLatest(reload.startWith(null), _.identity)
+    .combineLatest(reload.startWith(null), x => x)
     .tap(x => state.onNext('BEGIN'))
-    .flatMap(x => fetchAsObservable(x.url, _.omit(x, 'url')))
+    .flatMap(x => fetchAsObservable(x.url, omit(x, ['url'])))
     .tap(x => state.onNext('END'))
     .subscribe(response)
   const getResponseStream = () => response
@@ -41,7 +44,7 @@ module.exports = function (fetchAsObservable, parseJSON, requestStream, _options
     // TODO: Deprecate Legacy API
     getDataStream: getResponseStream,
     sync: getComponentLifeCycleObserver,
-    hydrate: x => hydrate.set(v => v + _.isFinite(x) ? x : 1),
+    hydrate: x => hydrate.set(v => v + Number.isFinite(x) ? x : 1),
 
     getResponseStream,
     getJSONStream: () => response.flatMap(parseJSON).share(),

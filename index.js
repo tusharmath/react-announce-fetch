@@ -3,13 +3,14 @@
  */
 'use strict'
 
-const _ = require('lodash')
 const Rx = require('rx')
 const createDataStore = require('./src/createDataStore')
 
 const fetch = (url, options) => Rx.Observable.fromPromise(window.fetch(url, options))
 const parseJSON = x => Rx.Observable.fromPromise(x.json())
-var create = _.partial(createDataStore, fetch, parseJSON)
+const create = (requestStream, _options) => createDataStore(
+  fetch, parseJSON, requestStream, _options
+)
 module.exports = {
   create,
   // Alias for legacy purposes

@@ -1,4 +1,4 @@
-# react-announce-fetch[![Build Status](https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master)](https://travis-ci.org/tusharmath/react-announce-fetch) [![npm](https://img.shields.io/npm/v/react-announce-fetch.svg)]()
+# react-announce-fetch[![Build Status](https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master)](https://travis-ci.org/tusharmath/react-announce-fetch) [![npm](https://img.shields.io/npm/v/react-announce-fetch.svg)]() [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 a [react-announce](https://github.com/tusharmath/react-announce) declarative to create REST based data stores
 
 Enables developers to create a shared data resource that can be used by multiple components.
@@ -30,7 +30,7 @@ const users = create(requestStream)
 @connect({users: users.getJSONStream()})
 
 // Using @hydrate binds the store to the component's lifecycle events.  
-@hydrate({[users.getComponentLifeCycleObserver()]})
+@hydrate(users.getComponentLifeCycleObserver())
 Users extends Component {
   render () {
     return (
@@ -57,8 +57,8 @@ END
 */
 ```
 
-## API create(requestStream)
-`create` takes in an requestStream which is an `observable`, that emits notifications in the of following schema format —
+## API create(observable, options)
+`create` takes in two parameters. An `observable` which basically is the request stream that emits notifications in the of following schema format —
 
 **Sample Schema for Request Stream**
 ```javascript
@@ -68,6 +68,9 @@ END
   body: JSON.stringify({name: 'Godzilla!', age: 390})
 }
 ```
+
+*options:* 
+- `hot`: `true|false` when true, the requests are immediately made and the store doesn't wait for any component to be mounted/unmounted.
 
 ## API store.prototype
 - `getStateStream()` Exposes an observable that emits `BEGIN` when the request starts and `END` when it finishes.

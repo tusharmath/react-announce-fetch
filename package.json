@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "^3.10.1",
-    "reactive-storage": "0.x",
+    "reactive-storage": "0.x"
+  },
+  "peerDependencies": {
     "rx": "^4.0.7"
   },
   "devDependencies": {

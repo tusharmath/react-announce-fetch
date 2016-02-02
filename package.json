@@ -1,20 +1,24 @@
 {
   "name": "react-announce-fetch",
   "description": "a react-announce declarative to create REST based data stores",
-  "version": "0.1.3",
   "main": "index.js",
   "scripts": {
-    "test": "node_modules/ava/cli.js --verbose"
+    "test": "node_modules/ava/cli.js --verbose",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "author": "tusharmath@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.1.0",
-    "reactive-storage": "0.x",
+    "lodash": "^3.10.1",
+    "reactive-storage": "0.x"
+  },
+  "peerDependencies": {
     "rx": "^4.0.7"
   },
   "devDependencies": {
-    "ava": "^0.11.0"
+    "ava": "^0.9.1",
+    "cz-conventional-changelog": "^1.1.5",
+    "semantic-release": "^4.3.5"
   },
   "repository": {
     "type": "git",
@@ -39,5 +43,10 @@
     "store",
     "shared",
     "fetch"
-  ]
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }

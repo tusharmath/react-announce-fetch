@@ -29,8 +29,8 @@ const users = create(requestStream)
 // users data store can be used like any other stream via the connect module
 @connect({users: users.getJSONStream()})
 
-// Using @hydrate binds the store to the component's lifecycle events.  
-@hydrate(users.getComponentLifeCycleObserver())
+// Using @asStream binds the store to the component's lifecycle events.  
+@asStream(users.getComponentLifeCycleObserver())
 Users extends Component {
   render () {
     return (

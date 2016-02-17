@@ -17,6 +17,7 @@
   "devDependencies": {
     "ava": "^0.9.1",
     "cz-conventional-changelog": "^1.1.5",
+    "rx": "^4.0.8",
     "semantic-release": "^4.3.5"
   },
   "repository": {

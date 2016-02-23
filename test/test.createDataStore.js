@@ -294,3 +294,10 @@ test('getJSONStream():parseJSON called once', t => {
   scheduler.startScheduler(() => paramsStream)
   t.same(out, 3)
 })
+
+test('getComponentLifeCycleObserver:alias', t => {
+  const sh = new TestScheduler()
+  const store = createDataStore({}, x => x, sh.createHotObservable(), {})
+  t.is(store.getComponentLifeCycleObserver, store.sync)
+  t.is(store.getComponentLifeCycleObserver, store.listen)
+})

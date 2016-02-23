@@ -31,8 +31,8 @@ const users = create(requestStream)
 // users data store can be used like any other stream via the connect module
 @connect({users: users.getJSONStream()})
 
-// Using @hydrate binds the store to the component's lifecycle events.  
-@asStream(users.getComponentLifeCycleObserver())
+// Using @asStream binds the store to the component's lifecycle events.  
+@asStream(users.listen())
 Users extends Component {
   render () {
     return (
@@ -80,7 +80,7 @@ END
 - `getJSONStream()` Exposes the `json` data from the response stream (JSON parsing is async).
 - `reload()` Forcefully refreshes the store. By default requests are only made when the request stream fires an event. In some cases one might want to manually refresh the store.
 - `dispose()` Disposes the observer to the request stream. All future changes to the request stream are ignored.
-- `getComponentLifeCycleObserver()` Exposes an observer that listens to the component life cycle stream. This can be  use to create a `cold` data store. Compatable with events dispatched by [react-announce](https://github.com/tusharmath/react-announce#getcomponentstreamstream-observable-dispose-function)
+- `listen()` Exposes an observer that listens to the component life cycle event stream. This can be  use to create a `cold` data store. Compatable with events dispatched by [react-announce](https://github.com/tusharmath/react-announce#getcomponentstreamstream-observable-dispose-function)
 
 ## Cold Data Stores
 The stores that only start refreshing themselves once they are hydrated via some component's lifecyle events. The main idea is that if the data store should not be making HTTP request and updating the state of an `UNMOUNTED` component with the response. So they remain dormant until a component starts listening to them.

@@ -23,5 +23,10 @@ test('fetch', t => {
   )
   e.create({fetch: x => [x.url]}, request).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, ['/a', '/b'])
+  t.same(out, [
+    {event: 'FETCH_START', args: [{url: '/a'}]},
+    {event: 'FETCH_END', args: ['/a']},
+    {event: 'FETCH_START', args: [{url: '/b'}]},
+    {event: 'FETCH_END', args: ['/b']}
+  ])
 })

@@ -6,11 +6,11 @@
 const Rx = require('rx')
 const targs = require('argtoob')
 const e = module.exports = (e, request) => {
-  const hydration = e.hydrationCount(request)
+  const hydration = e.isHydrated(request)
   return e.create(e, request, hydration)
 }
 
-e.hydrationCount = require('./hydrationCount')
+e.isHydrated = require('./isHydrated')
 
 e.create = function (e, request, isHydrated) {
   const subject = new Rx.Subject()

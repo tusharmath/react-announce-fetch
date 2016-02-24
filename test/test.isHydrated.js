@@ -1,4 +1,4 @@
-import f from '../src/hydrationCount'
+import f from '../src/isHydrated'
 import test from 'ava'
 import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
@@ -15,5 +15,5 @@ test(t => {
 
   f(ev).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, [0, 1, 2, 1])
+  t.same(out, [false, true])
 })

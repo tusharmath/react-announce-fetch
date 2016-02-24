@@ -7,5 +7,6 @@ module.exports = events => {
   return Rx.Observable
     .merge(mount, unmount).startWith(0)
     .tap(x => hydrationCount += x)
-    .map(() => hydrationCount)
+    .map(() => hydrationCount > 0)
+    .distinctUntilChanged()
 }

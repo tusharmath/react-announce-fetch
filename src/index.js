@@ -15,9 +15,6 @@ const e = module.exports = (e, fetch, request) => {
 e.isHydrated = require('./isHydrated')
 e.getHydratedRequests = require('./getHydratedRequests')
 e.fetchEnd = require('./fetchEnd')
-
-e.fetchStart = (request, observer) => e
-    .getHydratedRequests(request, observer)
-    .map(x => ({event: 'FETCH_START', args: [x]}))
+e.fetchBegin = require('./fetchBegin')
 
 e.reload = observer => observer.onNext({event: 'RELOAD'})

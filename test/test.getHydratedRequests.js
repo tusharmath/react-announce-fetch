@@ -1,5 +1,5 @@
 import test from 'ava'
-import {getHydratedRequests as e} from '../src/main'
+import e from '../src/getHydratedRequests'
 import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
 

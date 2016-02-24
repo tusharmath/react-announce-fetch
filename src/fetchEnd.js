@@ -1,5 +1,5 @@
 module.exports = (fetch, com) => {
-  const request = com.filter(x => x.event === 'FETCH_END').map(x => x.args[0])
+  const request = com.filter(x => x.event === 'FETCH_BEGIN').map(x => x.args[0])
   const reload = com.filter(x => x.event === 'RELOAD').startWith(null)
 
   return request

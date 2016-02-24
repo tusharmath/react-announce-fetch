@@ -8,8 +8,8 @@ test(t => {
   const fetch = x => [x]
   const sh = new TestScheduler()
   const com = sh.createHotObservable(
-    onNext(210, {event: 'FETCH_END', args: ['req0']}),
-    onNext(220, {event: 'FETCH_END', args: ['req1']}),
+    onNext(210, {event: 'FETCH_BEGIN', args: ['req0']}),
+    onNext(220, {event: 'FETCH_BEGIN', args: ['req1']}),
     onNext(230, {event: 'RELOAD'})
   )
   e(fetch, com).subscribe(x => out.push(x))

@@ -7,8 +7,7 @@ const Rx = require('rx')
 
 const e = module.exports = (e, fetch, request) => {
   const observer = new Rx.Subject()
-  e.fetchStart(request, observer).subscribe(observer)
-  e.fetchEnd(fetch, observer).subscribe(observer)
+  e.fetch(fetch, request, observer).subscribe(observer)
   return observer
 }
 
@@ -16,5 +15,9 @@ e.isHydrated = require('./isHydrated')
 e.getHydratedRequests = require('./getHydratedRequests')
 e.fetchEnd = require('./fetchEnd')
 e.fetchBegin = require('./fetchBegin')
+e.fetch = (fetch, request, observer) => Rx.Observable.merge(
+    e.fetchBegin(request, observer),
+    e.fetchEnd(fetch, observer)
+)
 
 e.reload = observer => observer.onNext({event: 'RELOAD'})

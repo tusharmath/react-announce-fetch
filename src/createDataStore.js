@@ -4,7 +4,7 @@
 'use strict'
 
 const Rx = require('rx')
-
+const targs = require('argtoob')
 const e = module.exports = (e, request) => {
   const hydration = e.hydrationCount(request)
   return e.create(e, request, hydration)
@@ -12,9 +12,11 @@ const e = module.exports = (e, request) => {
 
 e.hydrationCount = require('./hydrationCount')
 
-e.create = function (e, request, hydration) {
+e.create = function (e, request, isHydrated) {
   const subject = new Rx.Subject()
-  request
+  request.combineLatest(isHydrated, targs('request', 'isHydrated'))
+    .filter(x => x.isHydrated)
+    .pluck('request')
     .tap(x => subject.onNext({event: 'FETCH_START', args: [x]}))
     .flatMap(x => e.fetch(x))
     .map(response => ({event: 'FETCH_END', args: [response]}))

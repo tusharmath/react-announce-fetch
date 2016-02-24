@@ -18,10 +18,26 @@ test('fetch', t => {
   const out = []
   const sh = new TestScheduler()
   const request = sh.createHotObservable(
+    onNext(210, {}),
+    onNext(220, {})
+  )
+  const hydration = sh.createHotObservable()
+  e.create({fetch: x => [x.url]}, request, hydration).subscribe(x => out.push(x))
+  sh.start()
+  t.same(out, [])
+})
+
+test('fetch:hydration:1', t => {
+  const out = []
+  const sh = new TestScheduler()
+  const request = sh.createHotObservable(
     onNext(210, {url: '/a'}),
     onNext(220, {url: '/b'})
   )
-  e.create({fetch: x => [x.url]}, request).subscribe(x => out.push(x))
+  const hydration = sh.createHotObservable(
+    onNext(201, true)
+  )
+  e.create({fetch: x => [x.url]}, request, hydration).subscribe(x => out.push(x))
   sh.start()
   t.same(out, [
     {event: 'FETCH_START', args: [{url: '/a'}]},

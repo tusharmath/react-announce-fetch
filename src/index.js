@@ -14,7 +14,7 @@ const e = module.exports = (e, fetch, request) => {
 
 e.isHydrated = require('./isHydrated')
 e.getHydratedRequests = require('./getHydratedRequests')
-e.fetch = require('./fetch')
+e.fetch = require('./fetchEnd')
 
 e.fetchStart = (request, observer) => e
     .getHydratedRequests(request, observer)

@@ -1,5 +1,5 @@
 import test from 'ava'
-import e from '../src/fetch'
+import e from '../src/fetchEnd'
 import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
 

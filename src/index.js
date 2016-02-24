@@ -8,13 +8,13 @@ const Rx = require('rx')
 const e = module.exports = (e, fetch, request) => {
   const observer = new Rx.Subject()
   e.fetchStart(request, observer).subscribe(observer)
-  e.fetch(fetch, observer).subscribe(observer)
+  e.fetchEnd(fetch, observer).subscribe(observer)
   return observer
 }
 
 e.isHydrated = require('./isHydrated')
 e.getHydratedRequests = require('./getHydratedRequests')
-e.fetch = require('./fetchEnd')
+e.fetchEnd = require('./fetchEnd')
 
 e.fetchStart = (request, observer) => e
     .getHydratedRequests(request, observer)

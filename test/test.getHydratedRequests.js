@@ -10,11 +10,10 @@ test(t => {
     onNext(210, 'req0'),
     onNext(220, 'req1')
   )
-  const hyd = sh.createHotObservable(
-    onNext(215, true),
-    onNext(230, true)
+  const com = sh.createHotObservable(
+    onNext(215, {event: 'WILL_MOUNT', args: []})
   )
-  e(req, hyd).subscribe(x => out.push(x))
+  e(req, com).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, ['req0', 'req1', 'req1'])
+  t.same(out, ['req0', 'req1'])
 })

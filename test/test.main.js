@@ -5,7 +5,7 @@
 'use strict'
 import Rx from 'rx'
 import test from 'ava'
-import e from '../src'
+import e from '../src/main'
 import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
 const noop = function () {}

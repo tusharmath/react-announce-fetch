@@ -3,6 +3,6 @@
  */
 'use strict'
 
-const e = require('./src/index')
+const e = require('./src/main')
 
 exports.create = request => e(e, window.fetch, request)

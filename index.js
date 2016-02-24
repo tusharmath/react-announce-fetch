@@ -6,3 +6,4 @@
 const e = require('./src/main')
 
 exports.create = request => e(e, window.fetch, request)
+exports.toJSON = require('./src/toJSON')

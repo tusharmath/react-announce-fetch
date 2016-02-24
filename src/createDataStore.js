@@ -10,13 +10,12 @@ const omit = (obj, keys) => {
   keys.forEach(x => delete out[x])
   return out
 }
-module.exports = function (fetchAsObservable, requestStream, _options) {
-  const options = Object.assign({hot: false}, _options)
+module.exports = function (fetchAsObservable, requestStream) {
   const lifeCycleObserver = new Rx.Subject()
   const response = new Rx.Subject()
   const reload = new Rx.Subject()
   const state = new Rx.Subject()
-  const hydrate = createStoreStream(options.hot ? 1 : 0)
+  const hydrate = createStoreStream(0)
   Rx.Observable.merge(
     lifeCycleObserver.filter(x => x.event === 'WILL_MOUNT').map(1),
     lifeCycleObserver.filter(x => x.event === 'WILL_UNMOUNT').map(-1)

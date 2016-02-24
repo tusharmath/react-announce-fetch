@@ -14,7 +14,7 @@ test('returns subject', t => {
   t.true(e.create({}, sh.createHotObservable()) instanceof Rx.Subject)
 })
 
-test(t => {
+test('fetch', t => {
   const out = []
   const sh = new TestScheduler()
   const request = sh.createHotObservable(

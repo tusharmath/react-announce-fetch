@@ -9,7 +9,7 @@
   "author": "tusharmath@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "reactive-storage": "0.x"
+    "argtoob": "^1.0.2"
   },
   "peerDependencies": {
     "rx": "^4.0.8"

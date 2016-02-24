@@ -5,4 +5,5 @@ module.exports = (fetch, com) => {
   return request
     .combineLatest(reload, a => a)
     .flatMap(x => fetch(x))
+    .map(x => ({event: 'FETCH_END', args: [x]}))
 }

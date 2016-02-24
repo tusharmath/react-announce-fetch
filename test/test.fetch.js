@@ -14,5 +14,9 @@ test(t => {
   )
   e(fetch, com).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, ['req0', 'req1', 'req1'])
+  t.same(out, [
+    {event: 'FETCH_END', args: ['req0']},
+    {event: 'FETCH_END', args: ['req1']},
+    {event: 'FETCH_END', args: ['req1']}
+  ])
 })

@@ -20,12 +20,23 @@ test('returns subject', t => {
 test(t => {
   const out = []
   const sh = new TestScheduler()
-  const fetch = x => [x]
+  const fetch = (url, options) => sh.createHotObservable(
+      onNext(230, url + options.a)
+  )
   const request = sh.createHotObservable(
-    onNext(210, {url: '/a'})
+    onNext(210, ['/a', {a: 0}])
   )
   const subject = e(e, fetch, request)
+
   subject.subscribe(x => out.push(x))
+  subject.onNext({event: 'WILL_MOUNT'})
+
   sh.start()
-  subject.onNext({event: 'WILL_MOUNT'})  
+  subject.onNext({event: 'WILL_MOUNT'})
+  t.same(out, [
+    {event: 'WILL_MOUNT'},
+    {event: 'FETCH_BEGIN', args: ['/a', {a: 0}]},
+    {event: 'FETCH_END', args: ['/a0']},
+    {event: 'WILL_MOUNT' }
+  ])
 })

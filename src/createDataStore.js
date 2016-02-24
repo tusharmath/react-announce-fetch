@@ -42,7 +42,6 @@ module.exports = function (fetchAsObservable, parseJSON, requestStream, _options
   const getComponentLifeCycleObserver = () => lifeCycleObserver
   return {
     // TODO: Deprecate Legacy API
-    getDataStream: getResponseStream,
     sync: getComponentLifeCycleObserver,
     listen: getComponentLifeCycleObserver,
     hydrate: x => hydrate.set(v => v + Number.isFinite(x) ? x : 1),

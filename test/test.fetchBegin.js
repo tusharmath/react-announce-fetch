@@ -10,10 +10,11 @@ test(t => {
     onNext(210, {event: 'WILL_MOUNT', args: []})
   )
   const req = sh.createHotObservable(
-    onNext(220, 'req0')
+    onNext(220, ['req0'])
   )
   e(req, obs).subscribe(x => out.push(x))
   sh.start()
+
   t.same(out, [
     {event: 'FETCH_BEGIN', args: ['req0']}
   ])

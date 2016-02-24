@@ -198,7 +198,7 @@ test('distinct request', t => {
   ])
 })
 
-test('sync()', t => {
+test('listen()', t => {
   const out = []
   const fetch = x => Observable.just(x + 1000)
   const scheduler = new TestScheduler()
@@ -213,10 +213,10 @@ test('sync()', t => {
   )
   const store = createDataStore(fetch, noop, paramsStream)
   store.getResponseStream().subscribe(x => out.push(x))
-  const sync = store.sync()
-  sync.onNext({event: 'WILL_MOUNT'})
+  const listen = store.listen()
+  listen.onNext({event: 'WILL_MOUNT'})
   scheduler.advanceBy(235)
-  sync.onNext({event: 'WILL_UNMOUNT'})
+  listen.onNext({event: 'WILL_UNMOUNT'})
   scheduler.advanceBy(250)
   t.same(out, [
     1010,
@@ -298,6 +298,5 @@ test('getJSONStream():parseJSON called once', t => {
 test('getComponentLifeCycleObserver:alias', t => {
   const sh = new TestScheduler()
   const store = createDataStore({}, x => x, sh.createHotObservable(), {})
-  t.is(store.getComponentLifeCycleObserver, store.sync)
   t.is(store.getComponentLifeCycleObserver, store.listen)
 })

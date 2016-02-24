@@ -1,3 +1,3 @@
 const getHydratedRequests = require('./getHydratedRequests')
-module.exports = (request, observer) => getHydratedRequests(request, observer)
-    .map(x => ({event: 'FETCH_END', args: [x]}))
+module.exports = (req, obs) => getHydratedRequests(req, obs)
+    .map(x => ({event: 'FETCH_BEGIN', args: [x]}))

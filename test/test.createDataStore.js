@@ -9,8 +9,7 @@ import createDataStore from '../src/createDataStore'
 import { ReactiveTest, TestScheduler, Observable } from 'rx'
 const {onNext, onCompleted} = ReactiveTest
 
-const noop = function () {
-}
+const noop = function () {}
 var fetched = []
 const fetch = x => {
   fetched.push(x)
@@ -27,7 +26,7 @@ test(t => {
     onNext(210, null),
     onNext(210, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
@@ -50,7 +49,7 @@ test('reload:hydrated', t => {
     onNext(215, null),
     onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.reload()
@@ -75,7 +74,7 @@ test('reload:unhydrated', t => {
     onNext(215, null),
     onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, noop, paramsStream)
+  const store = createDataStore(fetch, paramsStream)
   store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.reload()
@@ -93,7 +92,7 @@ test('lazy component mounting', t => {
     onNext(215, null),
     onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, noop, paramsStream)
+  const store = createDataStore(fetch, paramsStream)
   store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   store.getComponentLifeCycleObserver().onNext({event: `WILL_MOUNT`})
@@ -105,7 +104,7 @@ test('hydrated:no-param', t => {
   const fetch = x => Observable.just(x.a + 1000)
   const scheduler = new TestScheduler()
   const paramsStream = scheduler.createHotObservable(onNext(210, {url: {a: 1}}))
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getResponseStream().subscribe(x => out.push(x))
   store.hydrate()
   scheduler.startScheduler(() => paramsStream)
@@ -119,7 +118,7 @@ test('no fetch on increase in hydration', t => {
     onNext(200, {url: {a: 1}}),
     onNext(212, {url: {a: 2}})
   )
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
 
@@ -137,7 +136,7 @@ test('getStateStream', t => {
     onNext(215, null),
     onNext(216, {url: {a: 4}})
   )
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getStateStream({}).subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
@@ -157,7 +156,7 @@ test('initial value', t => {
     onNext(210, {url: {a: 1}}),
     onNext(212, {url: {a: 2}})
   )
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [1001, 1002])
@@ -185,7 +184,7 @@ test('distinct request', t => {
     onNext(215, val[4]),
     onNext(216, val[5])
   )
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
   t.same(out, [
@@ -211,7 +210,7 @@ test('listen()', t => {
     onNext(250, {url: 14}),
     onNext(260, {url: 15})
   )
-  const store = createDataStore(fetch, noop, paramsStream)
+  const store = createDataStore(fetch, paramsStream)
   store.getResponseStream().subscribe(x => out.push(x))
   const listen = store.listen()
   listen.onNext({event: 'WILL_MOUNT'})
@@ -234,7 +233,7 @@ test('fetch:url+options', t => {
     onNext(200, {url: 10, headers: 3}),
     onNext(210, {url: 11, headers: 4})
   )
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getResponseStream().subscribe(x => out.push(x))
   store.hydrate()
   scheduler.startScheduler(() => paramsStream)
@@ -253,7 +252,7 @@ test('onCompleted()', t => {
     onCompleted(220),
     onNext(230, {url: 12, headers: 5})
   )
-  const store = createDataStore(fetch, noop, paramsStream, {hot: true})
+  const store = createDataStore(fetch, paramsStream, {hot: true})
   store.getResponseStream().subscribe(x => result.push(x), null, x => out.push('response-completed'))
   store.getStateStream().subscribe(noop, null, x => out.push('state-completed'))
   store.hydrate()
@@ -266,37 +265,8 @@ test('onCompleted()', t => {
   t.same(result, [3010, 4011])
 })
 
-test('getJSONStream()', t => {
-  const out = []
-  const scheduler = new TestScheduler()
-  const paramsStream = scheduler.createHotObservable(
-    onNext(210, {url: {a: 1}}),
-    onNext(210, {url: {a: 2}}),
-    onNext(210, {url: {a: 3}})
-  )
-  const store = createDataStore(fetch, x => [x + 10], paramsStream, {hot: true})
-  store.getJSONStream().subscribe(x => out.push(x))
-  scheduler.startScheduler(() => paramsStream)
-  t.same(out, [1011, 1012, 1013])
-})
-
-test('getJSONStream():parseJSON called once', t => {
-  var out = 0
-  const scheduler = new TestScheduler()
-  const paramsStream = scheduler.createHotObservable(
-    onNext(210, {url: {a: 1}}), onNext(210, {url: {a: 2}}), onNext(210, {url: {a: 3}})
-  )
-  var parseJSON = () => [out++]
-  const store = createDataStore(fetch, parseJSON, paramsStream, {hot: true})
-  const jsonStream = store.getJSONStream()
-  jsonStream.subscribe(noop)
-  jsonStream.subscribe(noop)
-  scheduler.startScheduler(() => paramsStream)
-  t.same(out, 3)
-})
-
 test('getComponentLifeCycleObserver:alias', t => {
   const sh = new TestScheduler()
-  const store = createDataStore({}, x => x, sh.createHotObservable(), {})
+  const store = createDataStore({}, sh.createHotObservable(), {})
   t.is(store.getComponentLifeCycleObserver, store.listen)
 })

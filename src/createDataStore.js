@@ -10,7 +10,7 @@ const omit = (obj, keys) => {
   keys.forEach(x => delete out[x])
   return out
 }
-module.exports = function (fetchAsObservable, parseJSON, requestStream, _options) {
+module.exports = function (fetchAsObservable, requestStream, _options) {
   const options = Object.assign({hot: false}, _options)
   const lifeCycleObserver = new Rx.Subject()
   const response = new Rx.Subject()
@@ -46,7 +46,6 @@ module.exports = function (fetchAsObservable, parseJSON, requestStream, _options
     hydrate: x => hydrate.set(v => v + Number.isFinite(x) ? x : 1),
 
     getResponseStream,
-    getJSONStream: () => response.flatMap(parseJSON).share(),
     getStateStream: () => state,
     reload: () => reload.onNext(null),
     getComponentLifeCycleObserver,

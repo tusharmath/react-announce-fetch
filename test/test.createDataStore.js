@@ -97,7 +97,7 @@ test('lazy component mounting', t => {
   const store = createDataStore(fetch, paramsStream)
   store.getResponseStream().subscribe(x => out.push(x))
   scheduler.startScheduler(() => paramsStream)
-  store.getComponentLifeCycleObserver().onNext({event: `WILL_MOUNT`})
+  store.listen().onNext({event: `WILL_MOUNT`})
   t.same(out, [1004])
 })
 
@@ -268,10 +268,4 @@ test('onCompleted()', t => {
     'state-completed'
   ])
   t.same(result, [3010, 4011])
-})
-
-test('getComponentLifeCycleObserver:alias', t => {
-  const sh = new TestScheduler()
-  const store = createDataStore({}, sh.createHotObservable(), {})
-  t.is(store.getComponentLifeCycleObserver, store.listen)
 })

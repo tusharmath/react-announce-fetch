@@ -47,7 +47,6 @@ module.exports = function (fetchAsObservable, requestStream) {
     getResponseStream,
     getStateStream: () => state,
     reload: () => reload.onNext(null),
-    getComponentLifeCycleObserver,
     // TODO: Add dispose functionality (TEST)
     dispose: () => disposable.dispose()
   }

@@ -11,14 +11,14 @@ const omit = (obj, keys) => {
   return out
 }
 module.exports = function (fetchAsObservable, requestStream) {
-  const lifeCycleObserver = new Rx.Subject()
+  const listen = new Rx.Subject()
   const response = new Rx.Subject()
   const reload = new Rx.Subject()
   const state = new Rx.Subject()
   const hydrate = createStoreStream(0)
   Rx.Observable.merge(
-    lifeCycleObserver.filter(x => x.event === 'WILL_MOUNT').map(1),
-    lifeCycleObserver.filter(x => x.event === 'WILL_UNMOUNT').map(-1)
+    listen.filter(x => x.event === 'WILL_MOUNT').map(1),
+    listen.filter(x => x.event === 'WILL_UNMOUNT').map(-1)
   ).subscribe(x => hydrate.set(store => store + x))
 
   const disposable = requestStream
@@ -38,10 +38,10 @@ module.exports = function (fetchAsObservable, requestStream) {
     .tap(x => state.onNext('END'))
     .subscribe(response)
   const getResponseStream = () => response
-  const getComponentLifeCycleObserver = () => lifeCycleObserver
+
   return {
     // TODO: Deprecate Legacy API
-    listen: getComponentLifeCycleObserver,
+    listen: () => listen,
     hydrate: x => hydrate.set(v => v + Number.isFinite(x) ? x : 1),
 
     getResponseStream,

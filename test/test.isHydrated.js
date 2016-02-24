@@ -1,4 +1,4 @@
-import f from '../src/isHydrated'
+import {isHydrated as f} from '../src/main'
 import test from 'ava'
 import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest

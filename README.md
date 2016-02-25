@@ -1,19 +1,31 @@
 # react-announce-fetch
-[![Build Status](https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master)](https://travis-ci.org/tusharmath/react-announce-fetch) [![npm](https://img.shields.io/npm/v/react-announce-fetch.svg)]() [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![Coverage Status](https://coveralls.io/repos/github/tusharmath/react-announce-fetch/badge.svg?branch=master)](https://coveralls.io/github/tusharmath/react-announce-fetch?branch=master)
+[![Build Status][travis-svg]][travis]
+[![npm][npm-svg]][npm]
+[![semantic-release][semantic-release-svg]][semantic-release]
+[![Coverage Status][coverage-svg]][coverage]
 
-Create REST based data-stores and bind it to a component.
+[travis-svg]:           https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master
+[travis]:               https://travis-ci.org/tusharmath/react-announce-fetch
+[semantic-release-svg]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[semantic-release]:     https://github.com/semantic-release/semantic-release
+[coverage-svg]:         https://coveralls.io/repos/github/tusharmath/react-announce-fetch/badge.svg?branch=master
+[coverage]:             https://coveralls.io/github/tusharmath/react-announce-fetch?branch=master
+[npm-svg]:              https://img.shields.io/npm/v/react-announce-fetch.svg
+[npm]:                  https://www.npmjs.com/package/react-announce-fetch
+
+
+An HTTP based `reactive` data store. Essentially it takes in an input stream  which represents the **HTTP Request Stream** (an Rx.Observable), and returns a **Communication Bus** (an Rx.Subject). Communication bus is how one can `send` as well as `receive` different kinds of events.
 
 ### Installation
 ```
 npm install react-announce-fetch --save
 ```
 
-### Create a data store
-This can be done using the factory method — `create()`. It takes in only one param, which represents the request stream. The stream must emit notifications containing all the props required by the [fetch](https://github.com/github/fetch) api.
+
 
 
 ### Usage
+
 
 ```javascript
 import Rx from 'rx'
@@ -24,9 +36,9 @@ import {Component} from 'react'
 
 const users = create(Rx.Observable.just(['/api/users', {method: 'GET'}]))
 
-// Using @asStream binds the store to the component's lifecycle events.  
+// Using @asStream binds the store to the components lifecycle events.  
 @asStream(users)
-Users extends Component {
+UsersList extends Component {
   render () {
     return <div>Hi!</div>
   }
@@ -35,6 +47,14 @@ Users extends Component {
 users.subscribe(x => console.log(x))
 
 ```
+
+### How does it work?
+[asStream]: https://github.com/tusharmath/react-announce#asstream
+
+It basically makes an HTTP request if one of the components that it is listening to (for lifecycle events) mounts. Once the response is received it is not going to make anymore requests, no matter how many components its linked to via **@asStream()** until, the request stream fires another *distinct* new value. 
+
+Also, if none of the components are in mounted state and the request stream keeps firing with different values, no HTTP requests are going to be made, UNTILL one of the components mounts. In which case, the params of the last request would be used to make the HTTP request.
+
 
 ## API
 

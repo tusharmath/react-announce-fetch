@@ -66,6 +66,11 @@ The following two events are fired on the store —
 ### reload(store)
 `reload()` Forcefully refreshes the store. By default requests are only made when the request stream fires an event.
 
+```javascript
+import {reload} from 'react-announce-fetch'
+reload(store)
+```
+
 ### toJSON(store)
 `toJSON()` is a simple utility method that simply exposes the store as a stream of JSON responses.
 

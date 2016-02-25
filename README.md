@@ -20,8 +20,6 @@ import Rx from 'rx'
 
 import {create, reload} from 'react-announce-fetch'
 import {asStream} from 'react-announce'
-
-
 import {Component} from 'react'
 
 const users = create(Rx.Observable.just(['/api/users', {method: 'GET'}]))
@@ -48,11 +46,11 @@ The following two events are fired on the store —
   ```javascript
   const users = create(Rx.Observable.just(['/api/users']))
 
-  users.filter(x => x.event === 'FETCH_BEGIN')
-  users.filter(x => x.event === 'FETCH_END')
+  users.filter(x => x.event === 'FETCH_BEGIN').pluck('args')
+  users.filter(x => x.event === 'FETCH_END').pluck('args')
   ```
 
-### store.create(observable)
+### create(observable)
 `store.create()` takes in one parameter — an `observable` which basically is the request stream that emits notifications in the of following schema format —
 
 **Sample Schema for Request Stream**
@@ -65,5 +63,13 @@ The following two events are fired on the store —
   }
 ]
 ```
-## reload()
-`reload()` Forcefully refreshes the store. By default requests are only made when the request stream fires an event. In some cases one might want to manually refresh the store.
+### reload(store)
+`reload()` Forcefully refreshes the store. By default requests are only made when the request stream fires an event.
+
+### toJSON(store)
+`toJSON()` is a simple utility method that simply exposes the store as a stream of JSON responses.
+
+```javascript
+import {toJSON} from 'react-announce-fetch'
+toJSON(store).subscribe(x => console.log(x))
+```

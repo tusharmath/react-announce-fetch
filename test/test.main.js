@@ -71,7 +71,6 @@ test('reload', t => {
   sh.advanceTo(240)
   e.reload(subject)
   sh.advanceTo(250)
-  console.log(out)
   t.same(out, [
     { event: 'WILL_MOUNT' },
     { event: 'FETCH_BEGIN', args: [ '/x' ] },

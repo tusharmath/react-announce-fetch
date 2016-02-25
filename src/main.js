@@ -19,5 +19,4 @@ e.fetch = (fetch, request, observer) => Rx.Observable.merge(
     e.fetchBegin(request, observer),
     e.fetchEnd(fetch, observer)
 )
-
-e.reload = observer => observer.onNext({event: 'RELOAD'})
+e.reload = observer => observer.onNext({event: 'RELOAD', args: []})

@@ -7,7 +7,8 @@ test(t => {
   const out = []
   const sh = new TestScheduler()
   const obs = sh.createHotObservable(
-    onNext(210, {event: 'WILL_MOUNT', args: []})
+    onNext(210, {event: 'WILL_MOUNT', args: []}),
+    onNext(230, {event: 'RELOAD'})
   )
   const req = sh.createHotObservable(
     onNext(220, ['req0'])
@@ -16,6 +17,7 @@ test(t => {
   sh.start()
 
   t.same(out, [
+    {event: 'FETCH_BEGIN', args: ['req0']},
     {event: 'FETCH_BEGIN', args: ['req0']}
   ])
 })

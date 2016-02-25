@@ -40,14 +40,14 @@ users.subscribe(x => console.log(x))
 
 ### Events
 The following two events are fired on the store —
-- `FETCH_BEGIN`: Fired as soon as the request is initiated.
-- `FETCH_END`: Fired as soon as the response in completely received.
+- `REQUEST`: Fired as soon as the request is initiated.
+- `RESPONSE`: Fired as soon as the response in completely received.
 
   ```javascript
   const users = create(Rx.Observable.just(['/api/users']))
 
-  users.filter(x => x.event === 'FETCH_BEGIN').pluck('args')
-  users.filter(x => x.event === 'FETCH_END').pluck('args')
+  users.filter(x => x.event === 'REQUEST').pluck('args')
+  users.filter(x => x.event === 'RESPONSE').pluck('args')
   ```
 
 ### create(observable)

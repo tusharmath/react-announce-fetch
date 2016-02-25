@@ -5,6 +5,6 @@ module.exports = (req, com) => {
     .startWith(null)
 
   return getHydratedRequests(req, com)
-    .map(x => ({event: 'FETCH_BEGIN', args: x}))
+    .map(x => ({event: 'REQUEST', args: x}))
     .combineLatest(reload, a => a)
 }

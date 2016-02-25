@@ -2,10 +2,10 @@ const Rx = require('rx')
 const targs = require('argtoob')
 module.exports = store => {
   const request = store
-    .filter(x => x.event === 'FETCH_BEGIN').pluck('args')
+    .filter(x => x.event === 'REQUEST').pluck('args')
 
   const response = store
-    .filter(x => x.event === 'FETCH_END').map(x => x.args[0])
+    .filter(x => x.event === 'RESPONSE').map(x => x.args[0])
 
   const json = response.flatMap(x => x.json())
 

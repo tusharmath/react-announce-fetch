@@ -1,4 +1,4 @@
 module.exports = (fetch, com) => com
-    .filter(x => x.event === 'FETCH_BEGIN')
+    .filter(x => x.event === 'REQUEST')
     .flatMap(x => fetch.apply(null, x.args))
-    .map(x => ({event: 'FETCH_END', args: [x]}))
+    .map(x => ({event: 'RESPONSE', args: [x]}))

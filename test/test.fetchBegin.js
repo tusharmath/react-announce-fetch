@@ -17,7 +17,7 @@ test(t => {
   sh.start()
 
   t.same(out, [
-    {event: 'FETCH_BEGIN', args: ['req0']},
-    {event: 'FETCH_BEGIN', args: ['req0']}
+    {event: 'REQUEST', args: ['req0']},
+    {event: 'REQUEST', args: ['req0']}
   ])
 })

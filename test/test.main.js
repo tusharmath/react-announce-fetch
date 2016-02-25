@@ -35,8 +35,8 @@ test(t => {
   subject.onNext({event: 'WILL_MOUNT'})
   t.same(out, [
     {event: 'WILL_MOUNT'},
-    {event: 'FETCH_BEGIN', args: ['/a', {a: 0}]},
-    {event: 'FETCH_END', args: ['/a0']},
+    {event: 'REQUEST', args: ['/a', {a: 0}]},
+    {event: 'RESPONSE', args: ['/a0']},
     {event: 'WILL_MOUNT'}
   ])
 })
@@ -73,13 +73,13 @@ test('reload', t => {
   sh.advanceTo(250)
   t.same(out, [
     { event: 'WILL_MOUNT' },
-    { event: 'FETCH_BEGIN', args: [ '/x' ] },
-    { event: 'FETCH_END', args: [ 'resp-230' ] },
-    { event: 'FETCH_BEGIN', args: [ '/x' ] },
+    { event: 'REQUEST', args: [ '/x' ] },
+    { event: 'RESPONSE', args: [ 'resp-230' ] },
+    { event: 'REQUEST', args: [ '/x' ] },
     { event: 'RELOAD', args: [ ] },
-    { event: 'FETCH_END', args: [ 'resp-240' ] },
-    { event: 'FETCH_BEGIN', args: [ '/x' ] },
+    { event: 'RESPONSE', args: [ 'resp-240' ] },
+    { event: 'REQUEST', args: [ '/x' ] },
     { event: 'RELOAD', args: [ ] },
-    { event: 'FETCH_END', args: [ 'resp-250' ] }
+    { event: 'RESPONSE', args: [ 'resp-250' ] }
   ])
 })

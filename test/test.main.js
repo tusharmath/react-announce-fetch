@@ -6,6 +6,7 @@
 import Rx from 'rx'
 import test from 'ava'
 import e from '../src/main'
+import reload from '../src/reload'
 import { TestScheduler, ReactiveTest } from 'rx'
 const {onNext, onCompleted} = ReactiveTest
 
@@ -67,9 +68,9 @@ test('reload', t => {
   subject.subscribe(x => out.push(x))
   subject.onNext({event: 'WILL_MOUNT'})
   sh.advanceTo(230)
-  e.reload(subject)
+  reload(subject)
   sh.advanceTo(240)
-  e.reload(subject)
+  reload(subject)
   sh.advanceTo(250)
   t.same(out, [
     { event: 'WILL_MOUNT' },

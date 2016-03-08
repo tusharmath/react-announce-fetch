@@ -21,9 +21,6 @@ An HTTP based `reactive` data store. Essentially it takes in an input stream  wh
 npm install react-announce-fetch --save
 ```
 
-
-
-
 ### Usage
 
 
@@ -51,7 +48,7 @@ users.subscribe(x => console.log(x))
 ### How does it work?
 [asStream]: https://github.com/tusharmath/react-announce#asstream
 
-It basically makes an HTTP request if one of the components that it is listening to (for lifecycle events) mounts. Once the response is received it is not going to make anymore requests, no matter how many components its linked to via **@asStream()** until, the request stream fires another *distinct* new value. 
+It basically makes an HTTP request if one of the components that it is listening to (for lifecycle events) mounts. Once the response is received it is not going to make anymore requests, no matter how many components its linked to via **@asStream()** until, the request stream fires another *distinct* new value.
 
 Also, if none of the components are in mounted state and the request stream keeps firing with different values, no HTTP requests are going to be made, UNTILL one of the components mounts. In which case, the params of the last request would be used to make the HTTP request.
 

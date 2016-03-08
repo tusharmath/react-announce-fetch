@@ -14,5 +14,5 @@ module.exports = store => {
     response,
     json,
     targs('request', 'response', 'json')
-  )
+  ).share()
 }

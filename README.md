@@ -95,3 +95,10 @@ reload(store)
 import {toJSON} from 'react-announce-fetch'
 toJSON(store).subscribe(x => console.log(x))
 ```
+### isLoading(store0, store1, store...)
+`isLoading()` exposes a stream with a `Boolean` value representing if a HTTP request is completed or not. It can take any number of stores as an argument and dispatches `true` if any one request is pending and `false` when not.
+
+```javascript
+import {isLoading} from 'react-announce-fetch'
+isLoading(store0, store1, store2).subscribe(x => console.log(x))
+```

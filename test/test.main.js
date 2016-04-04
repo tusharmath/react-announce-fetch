@@ -3,31 +3,29 @@
  */
 
 'use strict'
-import Rx from 'rx'
+import Rx, {TestScheduler, ReactiveTest} from 'rx'
 import test from 'ava'
-import e from '../src/main'
+import _ from 'funjector'
+import {create, xhr} from '../src/main'
 import reload from '../src/reload'
-import { TestScheduler, ReactiveTest } from 'rx'
 const {onNext, onCompleted} = ReactiveTest
 
 test('returns subject', t => {
   const sh = new TestScheduler()
-  const d = {
-    fetch: () => sh.createHotObservable()
-  }
-  t.true(e(d) instanceof Rx.Subject)
+  const fetch = () => sh.createHotObservable()
+  t.true(_.call(create, fetch) instanceof Rx.Subject)
 })
 
 test(t => {
   const out = []
   const sh = new TestScheduler()
   const fetch = (url, options) => sh.createHotObservable(
-      onNext(230, url + options.a)
+    onNext(230, url + options.a)
   )
   const request = sh.createHotObservable(
     onNext(210, ['/a', {a: 0}])
   )
-  const subject = e(e, fetch, request)
+  const subject = _.call(create, xhr, fetch, request)
 
   subject.subscribe(x => out.push(x))
   subject.onNext({event: 'WILL_MOUNT'})
@@ -63,7 +61,7 @@ test('reload', t => {
   const request = sh.createHotObservable(
     onNext(210, ['/x'])
   )
-  const subject = e(e, fetch, request)
+  const subject = _.call(create, xhr, fetch, request)
 
   subject.subscribe(x => out.push(x))
   subject.onNext({event: 'WILL_MOUNT'})
@@ -73,14 +71,14 @@ test('reload', t => {
   reload(subject)
   sh.advanceTo(250)
   t.same(out, [
-    { event: 'WILL_MOUNT' },
-    { event: 'REQUEST', args: [ '/x' ] },
-    { event: 'RESPONSE', args: [ 'resp-230' ] },
-    { event: 'REQUEST', args: [ '/x' ] },
-    { event: 'RELOAD', args: [ ] },
-    { event: 'RESPONSE', args: [ 'resp-240' ] },
-    { event: 'REQUEST', args: [ '/x' ] },
-    { event: 'RELOAD', args: [ ] },
-    { event: 'RESPONSE', args: [ 'resp-250' ] }
+    {event: 'WILL_MOUNT'},
+    {event: 'REQUEST', args: ['/x']},
+    {event: 'RESPONSE', args: ['resp-230']},
+    {event: 'REQUEST', args: ['/x']},
+    {event: 'RELOAD', args: []},
+    {event: 'RESPONSE', args: ['resp-240']},
+    {event: 'REQUEST', args: ['/x']},
+    {event: 'RELOAD', args: []},
+    {event: 'RESPONSE', args: ['resp-250']}
   ])
 })

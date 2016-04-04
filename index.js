@@ -3,9 +3,9 @@
  */
 'use strict'
 
-const e = require('./src/main')
+const create = require('./src/main').create
 
-exports.create = (request, fetch) => e(e, fetch || window.fetch, request)
+exports.create = (request, fetch) => create(fetch || window.fetch, request)
 exports.toJSON = require('./src/toJSON')
 exports.reload = require('./src/reload')
 exports.isLoading = require('./src/isLoading')

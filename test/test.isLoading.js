@@ -1,6 +1,6 @@
 import f from '../src/isLoading'
 import test from 'ava'
-import { ReactiveTest, TestScheduler } from 'rx'
+import {ReactiveTest, TestScheduler} from 'rx'
 const {onNext} = ReactiveTest
 
 test(t => {

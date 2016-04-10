@@ -1,18 +1,5 @@
-const Rx = require('rx')
-const targs = require('argtoob')
-module.exports = store => {
-  const request = store
-    .filter(x => x.event === 'REQUEST').pluck('args')
+'use strict'
 
-  const response = store
-    .filter(x => x.event === 'RESPONSE').map(x => x.args[0])
-
-  const json = response.flatMap(x => x.json())
-
-  return Rx.Observable.zip(
-    request,
-    response,
-    json,
-    targs('request', 'response', 'json')
-  ).share()
-}
+module.exports = store => store.flatmap(
+  response => response.json().then(json => ({json, response}))
+)

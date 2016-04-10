@@ -3,82 +3,53 @@
  */
 
 'use strict'
-import Rx, {TestScheduler, ReactiveTest} from 'rx'
+import {spy} from 'sinon'
+import {TestScheduler, ReactiveTest} from 'rx'
 import test from 'ava'
-import _ from 'funjector'
-import {create, xhr} from '../src/main'
-import reload from '../src/reload'
+import {create} from '../src/main'
+import {call} from 'funjector'
 const {onNext, onCompleted} = ReactiveTest
+const identity = x => x
 
-test('returns subject', t => {
+test('calls fetch', t => {
+  const fetch = spy(identity)
+  const toObservable = () => fetch
   const sh = new TestScheduler()
-  const fetch = () => sh.createHotObservable()
-  t.true(_.call(create, fetch) instanceof Rx.Subject)
-})
-
-test(t => {
-  const out = []
-  const sh = new TestScheduler()
-  const fetch = (url, options) => sh.createHotObservable(
-    onNext(230, url + options.a)
-  )
   const request = sh.createHotObservable(
-    onNext(210, ['/a', {a: 0}])
+    onNext(210, ['a', 1]),
+    onNext(220, ['b', 2])
   )
-  const subject = _.call(create, xhr, fetch, request)
-
-  subject.subscribe(x => out.push(x))
-  subject.onNext({event: 'WILL_MOUNT'})
-
+  call(create, toObservable, null, request)
+    .subscribe(identity)
   sh.start()
-  subject.onNext({event: 'WILL_MOUNT'})
-  t.same(out, [
-    {event: 'WILL_MOUNT'},
-    {event: 'REQUEST', args: ['/a', {a: 0}]},
-    {event: 'RESPONSE', args: ['/a0']},
-    {event: 'WILL_MOUNT'}
-  ])
+  t.true(fetch.getCall(0).calledWith('a', 1))
+  t.true(fetch.getCall(1).calledWith('b', 2))
 })
 
-test('reload', t => {
-  const out = []
+test('multiple subscriptions', t => {
+  const fetch = spy(identity)
+  const toObservable = () => fetch
   const sh = new TestScheduler()
-  const fetches = [
-    sh.createHotObservable(
-      onNext(230, 'resp-230'),
-      onCompleted(231)
-    ),
-    sh.createHotObservable(
-      onNext(240, 'resp-240'),
-      onCompleted(241)
-    ),
-    sh.createHotObservable(
-      onNext(250, 'resp-250'),
-      onCompleted(251)
-    )
-  ]
-  const fetch = (i) => fetches.shift()
   const request = sh.createHotObservable(
-    onNext(210, ['/x'])
+    onNext(210, ['a', 1]),
+    onNext(220, ['b', 2])
   )
-  const subject = _.call(create, xhr, fetch, request)
+  const store = call(create, toObservable, null, request)
+  store.subscribe(identity)
+  store.subscribe(identity)
+  sh.start()
+  t.is(fetch.callCount, 2)
+})
 
-  subject.subscribe(x => out.push(x))
-  subject.onNext({event: 'WILL_MOUNT'})
-  sh.advanceTo(230)
-  reload(subject)
-  sh.advanceTo(240)
-  reload(subject)
-  sh.advanceTo(250)
-  t.same(out, [
-    {event: 'WILL_MOUNT'},
-    {event: 'REQUEST', args: ['/x']},
-    {event: 'RESPONSE', args: ['resp-230']},
-    {event: 'REQUEST', args: ['/x']},
-    {event: 'RELOAD', args: []},
-    {event: 'RESPONSE', args: ['resp-240']},
-    {event: 'REQUEST', args: ['/x']},
-    {event: 'RELOAD', args: []},
-    {event: 'RESPONSE', args: ['resp-250']}
-  ])
+test('must get last value', t => {
+  const fetch = spy(x => x)
+  const toObservable = () => fetch
+  const sh = new TestScheduler()
+  const request = sh.createHotObservable(
+    onNext(100, ['a', 1]),
+    onNext(110, ['b', 2])
+  )
+  sh.startScheduler(() => call(create, toObservable, null, request))
+  t.is(fetch.callCount, 1)
+  t.true(fetch.calledWith('b', 2))
 })

@@ -13,7 +13,7 @@ e.toObservable = fetch => function () {
   return Rx.Observable.fromPromise(fetch.apply(null, args))
 }
 
-e.create = _.partial((toObservable, fetch, request) => {
+e.create = _.partial((toObservable, request, fetch) => {
   const fetchO = toObservable(fetch)
   const out = request
     .flatMap(x => fetchO.apply(null, x))

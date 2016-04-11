@@ -19,7 +19,7 @@ test('calls fetch', t => {
     onNext(210, ['a', 1]),
     onNext(220, ['b', 2])
   )
-  call(create, toObservable, null, request)
+  call(create, toObservable, request)
     .subscribe(identity)
   sh.start()
   t.true(fetch.getCall(0).calledWith('a', 1))
@@ -34,7 +34,7 @@ test('multiple subscriptions', t => {
     onNext(210, ['a', 1]),
     onNext(220, ['b', 2])
   )
-  const store = call(create, toObservable, null, request)
+  const store = call(create, toObservable, request)
   store.subscribe(identity)
   store.subscribe(identity)
   sh.start()
@@ -49,7 +49,7 @@ test('must get last value', t => {
     onNext(100, ['a', 1]),
     onNext(110, ['b', 2])
   )
-  sh.startScheduler(() => call(create, toObservable, null, request))
+  sh.startScheduler(() => call(create, toObservable, request))
   t.is(fetch.callCount, 1)
   t.true(fetch.calledWith('b', 2))
 })

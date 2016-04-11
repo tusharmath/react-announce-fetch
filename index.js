@@ -6,8 +6,8 @@
 const create = require('./src/main').create
 
 exports.create = (request, fetch) => create(
-  fetch || window.fetch.bind(window),
-  request
+  request,
+  fetch || window.fetch.bind(window)
 )
 
 exports.toJSON = require('./src/toJSON')

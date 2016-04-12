@@ -9,17 +9,14 @@
   "author": "tusharmath@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "funjector": "^3.1.0"
-  },
-  "peerDependencies": {
-    "rx": "^4.0.8"
+    "funjector": "^3.1.0",
+    "rx": "^4.1.0"
   },
   "devDependencies": {
     "ava": "^0.14.0",
     "coveralls": "^2.11.6",
     "cz-conventional-changelog": "^1.1.5",
     "nyc": "^6.0.0",
-    "rx": "^4.1.0",
     "semantic-release": "^4.3.5",
     "sinon": "^1.17.3"
   },

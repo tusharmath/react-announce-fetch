@@ -8,7 +8,7 @@ import {TestScheduler, ReactiveTest, Observable} from 'rx'
 import test from 'ava'
 import {create} from '../src/main'
 import {call} from 'funjector'
-const {onNext} = ReactiveTest
+const {onNext, onCompleted} = ReactiveTest
 const identity = x => x
 
 test('fetch:callCount: one per request', t => {
@@ -95,7 +95,7 @@ test('cold-request:no-fetch', t => {
   // Assert
   t.is(fetch.callCount, 1)
   t.true(fetch.getCall(0).calledWith('a0', 0))
-  t.deepEqual(messages, [onNext(200, 'a0-response')])
+  t.deepEqual(messages, [onNext(200, 'a0-response'), onCompleted(200)])
 })
 
 test('fetch:reload', t => {

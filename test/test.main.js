@@ -8,7 +8,7 @@ import {TestScheduler, ReactiveTest, Observable} from 'rx'
 import test from 'ava'
 import {create} from '../src/main'
 import {call} from 'funjector'
-const {onNext, onCompleted} = ReactiveTest
+const {onNext} = ReactiveTest
 const identity = x => x
 
 test('fetch:callCount: one per request', t => {

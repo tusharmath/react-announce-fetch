@@ -9,10 +9,9 @@
   "author": "tusharmath@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "rx": "^4.1.0",
     "argtoob": "^1.0.2",
     "funjector": "^3.1.0",
-    "reactive-storage": "^3.0.0"
+    "rx": "^4.1.0"
   },
   "devDependencies": {
     "ava": "^0.14.0",

@@ -105,7 +105,7 @@ test('fetch:reload', t => {
   const sh = new TestScheduler()
   const params = ['a0', 0]
   const request = sh.createHotObservable(
-    onNext(200, params),
+    onNext(205, params),
     onNext(210, params)
   )
 
@@ -117,5 +117,5 @@ test('fetch:reload', t => {
   t.is(fetch.callCount, 2)
   t.true(fetch.getCall(0).calledWith('a0', 0))
   t.true(fetch.getCall(1).calledWith('a0', 0))
-  t.deepEqual(messages, [onNext(200, 'a0-response'), onNext(210, 'a0-response')])
+  t.deepEqual(messages, [onNext(205, 'a0-response'), onNext(210, 'a0-response')])
 })

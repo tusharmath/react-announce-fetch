@@ -3,7 +3,7 @@
  */
 
 'use strict'
-
+import {spy} from 'sinon'
 import {TestScheduler, ReactiveTest} from 'rx'
 import test from 'ava'
 import toJSON from '../src/toJSON'
@@ -11,7 +11,7 @@ import toJSON from '../src/toJSON'
 const {onNext} = ReactiveTest
 const createResponse = val => ({
   status: 200,
-  json: () => [val + '-json']
+  json: spy(() => [val + '-json'])
 })
 
 test(t => {
@@ -29,4 +29,17 @@ test(t => {
     onNext(220, {json: '1-json', response: mocks[1]}),
     onNext(230, {json: '2-json', response: mocks[2]})
   ])
+})
+
+test('json():callCount', t => {
+  const sh = new TestScheduler()
+  const mockResponse = createResponse(0)
+  const ob0 = sh.createObserver()
+  const ob1 = sh.createObserver()
+  const responses = sh.createHotObservable(onNext(210, mockResponse))
+  const json = toJSON(responses)
+  sh.scheduleAbsolute(null, 200, () => json.subscribe(ob0))
+  sh.scheduleAbsolute(null, 205, () => json.subscribe(ob1))
+  sh.start()
+  t.is(mockResponse.json.callCount, 1)
 })

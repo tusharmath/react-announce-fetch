@@ -13,14 +13,14 @@ e.toObservable = fetch => function () {
   return Rx.Observable.fromPromise(fetch.apply(null, args))
 }
 
-e.create = _.partial((toObservable, request, fetch) => {
+// TODO: Move out of this module
+e.replayLatestAsyncMap = (source, asyncMapper) => {
   var refCount = 0
-  const fetchO = toObservable(fetch)
-  const _request = request.replay(null, 1)
-  const responses = _request
-    .flatMap(x => fetchO.apply(null, x))
+  const replaySource = source.replay(null, 1)
+  const responses = replaySource
+    .flatMap(asyncMapper)
     .replay(null, 1)
-  _request.connect()
+  replaySource.connect()
   return Rx.Observable.create(observer => {
     if (++refCount > 0) {
       var conn = responses.connect()
@@ -32,4 +32,9 @@ e.create = _.partial((toObservable, request, fetch) => {
       }
     }
   })
+}
+
+e.create = _.partial((toObservable, request, fetch) => {
+  const fetchO = toObservable(fetch)
+  return e.replayLatestAsyncMap(request, x => fetchO.apply(null, x))
 }, e.toObservable)

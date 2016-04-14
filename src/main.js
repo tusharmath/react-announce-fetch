@@ -8,16 +8,16 @@ const targs = require('argtoob')
 const _ = require('funjector')
 const e = exports
 
+e.xhr = (fetch, request, observer) => Rx.Observable.merge(
+  e.fetchBegin(request, observer),
+  e.fetchEnd(fetch, observer)
+)
+
 e.create = _.partial((xhr, fetch, request) => {
   const observer = new Rx.Subject()
   xhr(fetch, request, observer).subscribe(observer)
   return observer
 }, e.xhr)
-
-e.xhr = (fetch, request, observer) => Rx.Observable.merge(
-  e.fetchBegin(request, observer),
-  e.fetchEnd(fetch, observer)
-)
 
 e.isHydrated = events => {
   const mount = events.filter(x => x.event === 'WILL_MOUNT').map(1)

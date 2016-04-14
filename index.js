@@ -3,17 +3,9 @@
  */
 'use strict'
 
-const Rx = require('rx')
-const createDataStore = require('./src/createDataStore')
+const create = require('./src/main').create
 
-const fetch = (url, options) => Rx.Observable.fromPromise(window.fetch(url, options))
-const parseJSON = x => Rx.Observable.fromPromise(x.json())
-const create = (requestStream, _options) => createDataStore(
-  fetch, parseJSON, requestStream, _options
-)
-module.exports = {
-  create,
-  // Alias for legacy purposes
-  createDataStore: create,
-  createFetchStore: create
-}
+exports.create = (request, fetch) => create(fetch || window.fetch, request)
+exports.toJSON = require('./src/toJSON')
+exports.reload = require('./src/reload')
+exports.isLoading = require('./src/isLoading')

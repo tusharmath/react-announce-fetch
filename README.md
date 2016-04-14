@@ -1,97 +1,104 @@
 # react-announce-fetch
-[![Build Status](https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master)](https://travis-ci.org/tusharmath/react-announce-fetch) [![npm](https://img.shields.io/npm/v/react-announce-fetch.svg)]() [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![Coverage Status](https://coveralls.io/repos/github/tusharmath/react-announce-fetch/badge.svg?branch=master)](https://coveralls.io/github/tusharmath/react-announce-fetch?branch=master)
+[![Build Status][travis-svg]][travis]
+[![npm][npm-svg]][npm]
+[![semantic-release][semantic-release-svg]][semantic-release]
+[![Coverage Status][coverage-svg]][coverage]
 
-a [react-announce](https://github.com/tusharmath/react-announce) declarative to create REST based data stores
+[travis-svg]:           https://travis-ci.org/tusharmath/react-announce-fetch.svg?branch=master
+[travis]:               https://travis-ci.org/tusharmath/react-announce-fetch
+[semantic-release-svg]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[semantic-release]:     https://github.com/semantic-release/semantic-release
+[coverage-svg]:         https://coveralls.io/repos/github/tusharmath/react-announce-fetch/badge.svg?branch=master
+[coverage]:             https://coveralls.io/github/tusharmath/react-announce-fetch?branch=master
+[npm-svg]:              https://img.shields.io/npm/v/react-announce-fetch.svg
+[npm]:                  https://www.npmjs.com/package/react-announce-fetch
 
-Enables developers to create a shared data resource that can be used by multiple components.
+
+An HTTP based `reactive` data store. Essentially it takes in an input stream  which represents the **HTTP Request Stream** (an Rx.Observable), and returns a **Communication Bus** (an Rx.Subject). Communication bus is how one can `send` as well as `receive` different kinds of events.
 
 ### Installation
 ```
 npm install react-announce-fetch --save
 ```
 
-### Create a data store
-This can be done using the factory method — `create()`. It takes in only one param, which represents the request stream. The stream must emit notifications containing all the props required by the [fetch](https://github.com/github/fetch) api.
-
-
 ### Usage
 
-```javascript
-import {create} from 'react-announce-fetch'
-import {connect} from 'react-announce-connect'
-import {asStream} from 'react-announce'
 
-import {BehaviorSubject} from 'rx'
+```javascript
+import Rx from 'rx'
+
+import {create, reload} from 'react-announce-fetch'
+import {asStream} from 'react-announce'
 import {Component} from 'react'
 
-const requestStream = new BehaviorSubject({url: '/api/users'})
-const users = create(requestStream)
+const users = create(Rx.Observable.just(['/api/users', {method: 'GET'}]))
 
-// users data store can be used like any other stream via the connect module
-@connect({users: users.getJSONStream()})
-
-// Using @asStream binds the store to the component's lifecycle events.  
-@asStream(users.listen())
-Users extends Component {
+// Using @asStream binds the store to the components lifecycle events.  
+@asStream(users)
+UsersList extends Component {
   render () {
-    return (
-      <ul>
-        {this.state.users.map(x => <li>{x.name}</li>)}
-      </ul>
-    )    
+    return <div>Hi!</div>
   }
 }
 
-// Keep refreshing the user store every second. Store stops getting updated automatically when the component Users unmounts.
-setInterval(() => users.reload(), 1000)
+users.subscribe(x => console.log(x))
 
-
-// Get request state stream
-users.getStateStream(x => console.log(x))
-
-/*
-OUTPUTS
-
-BEGIN
-END
-
-*/
 ```
 
-## API create(observable, options)
-`create` takes in two parameters. An `observable` which basically is the request stream that emits notifications in the of following schema format —
+### How does it work?
+[asStream]: https://github.com/tusharmath/react-announce#asstream
+
+It basically makes an HTTP request if one of the components that it is listening to (for lifecycle events) mounts. Once the response is received it is not going to make anymore requests, no matter how many components its linked to via **@asStream()** until, the request stream fires another *distinct* new value.
+
+Also, if none of the components are in mounted state and the request stream keeps firing with different values, no HTTP requests are going to be made, UNTILL one of the components mounts. In which case, the params of the last request would be used to make the HTTP request.
+
+
+## API
+
+### Events
+The following two events are fired on the store —
+- `REQUEST`: Fired as soon as the request is initiated.
+- `RESPONSE`: Fired as soon as the response in completely received.
+
+  ```javascript
+  const users = create(Rx.Observable.just(['/api/users']))
+
+  users.filter(x => x.event === 'REQUEST').pluck('args')
+  users.filter(x => x.event === 'RESPONSE').pluck('args')
+  ```
+
+### create(observable)
+`store.create()` takes in one parameter — an `observable` which basically is the request stream that emits notifications in the of following schema format —
 
 **Sample Schema for Request Stream**
 ```javascript
-{
+[
   url: `/api/users`,
-  method: `POST` // Defaults to get
-  body: JSON.stringify({name: 'Godzilla!', age: 390})
-}
+  {  
+    method: `POST` // Defaults to get
+    body: JSON.stringify({name: 'Godzilla!', age: 390})
+  }
+]
 ```
-
-*options:*
-- `hot`: `true|false` when true, the requests are immediately made and the store doesn't wait for any component to be mounted/unmounted.
-
-## API store.prototype
-- `getStateStream()` Exposes an observable that emits `BEGIN` when the request starts and `END` when it finishes.
-- `getResponseStream()` Exposes the response of the HTTP request that is made every time the request stream fires an event.
-- `getJSONStream()` Exposes the `json` data from the response stream (JSON parsing is async).
-- `reload()` Forcefully refreshes the store. By default requests are only made when the request stream fires an event. In some cases one might want to manually refresh the store.
-- `dispose()` Disposes the observer to the request stream. All future changes to the request stream are ignored.
-- `listen()` Exposes an observer that listens to the component life cycle event stream. This can be  use to create a `cold` data store. Compatable with events dispatched by [react-announce](https://github.com/tusharmath/react-announce#getcomponentstreamstream-observable-dispose-function)
-
-## Cold Data Stores
-The stores that only start refreshing themselves once they are hydrated via some component's lifecyle events. The main idea is that if the data store should not be making HTTP request and updating the state of an `UNMOUNTED` component with the response. So they remain dormant until a component starts listening to them.
+### reload(store)
+`reload()` Forcefully refreshes the store. By default requests are only made when the request stream fires an event.
 
 ```javascript
-const store = create(new Rx.Observable.Subject())
+import {reload} from 'react-announce-fetch'
+reload(store)
 ```
 
-## Hot Data Stores
-These stores just start firing HTTP requests and keep updating themselves whenever there is a notification from the requests stream. They are not linked to any component.
+### toJSON(store)
+`toJSON()` is a simple utility method that simply exposes the store as a stream of JSON responses.
 
 ```javascript
-const store = create(new Rx.Observable.Subject(), {hot: true})
+import {toJSON} from 'react-announce-fetch'
+toJSON(store).subscribe(x => console.log(x))
+```
+### isLoading(store0, store1, store...)
+`isLoading()` exposes a stream with a `Boolean` value representing if a HTTP request is completed or not. It can take any number of stores as an argument and dispatches `true` if any one request is pending and `false` when not.
+
+```javascript
+import {isLoading} from 'react-announce-fetch'
+isLoading(store0, store1, store2).subscribe(x => console.log(x))
 ```

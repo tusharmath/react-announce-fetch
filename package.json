@@ -53,6 +53,9 @@
     }
   },
   "publishConfig": {
-    "tag": "next"
+    "tag": "latest"
+  },
+  "release": {
+    "branch": "latest"
   }
 }

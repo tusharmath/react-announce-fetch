@@ -1,6 +1,6 @@
 import test from 'ava'
-import {getHydratedRequests as e} from '../src/main'
-import {ReactiveTest, TestScheduler} from 'rx'
+import { getHydratedRequests as e } from '../src/main'
+import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
 
 test(t => {
@@ -15,5 +15,5 @@ test(t => {
   )
   e(req, com).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, ['req0', 'req1'])
+  t.deepEqual(out, ['req0', 'req1'])
 })

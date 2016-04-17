@@ -1,6 +1,6 @@
-import {isHydrated as f} from '../src/main'
+import { isHydrated as f } from '../src/main'
 import test from 'ava'
-import {ReactiveTest, TestScheduler} from 'rx'
+import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
 
 test(t => {
@@ -15,5 +15,5 @@ test(t => {
 
   f(ev).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, [false, true])
+  t.deepEqual(out, [false, true])
 })

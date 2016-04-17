@@ -1,6 +1,6 @@
 import test from 'ava'
-import {fetchEnd as e} from '../src/main'
-import {ReactiveTest, TestScheduler} from 'rx'
+import { fetchEnd as e } from '../src/main'
+import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
 
 test(t => {
@@ -18,7 +18,7 @@ test(t => {
   )
   e(fetch, com).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, [
+  t.deepEqual(out, [
     {event: 'RESPONSE', args: ['res-0']},
     {event: 'RESPONSE', args: ['res-1']}
   ])

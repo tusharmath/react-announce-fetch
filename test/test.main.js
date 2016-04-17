@@ -3,10 +3,10 @@
  */
 
 'use strict'
-import Rx, {TestScheduler, ReactiveTest} from 'rx'
+import Rx, { TestScheduler, ReactiveTest } from 'rx'
 import test from 'ava'
 import _ from 'funjector'
-import {create, xhr} from '../src/main'
+import { create, xhr } from '../src/main'
 import reload from '../src/reload'
 const {onNext, onCompleted} = ReactiveTest
 
@@ -32,7 +32,7 @@ test(t => {
 
   sh.start()
   subject.onNext({event: 'WILL_MOUNT'})
-  t.same(out, [
+  t.deepEqual(out, [
     {event: 'WILL_MOUNT'},
     {event: 'REQUEST', args: ['/a', {a: 0}]},
     {event: 'RESPONSE', args: ['/a0']},
@@ -70,7 +70,7 @@ test('reload', t => {
   sh.advanceTo(240)
   reload(subject)
   sh.advanceTo(250)
-  t.same(out, [
+  t.deepEqual(out, [
     {event: 'WILL_MOUNT'},
     {event: 'REQUEST', args: ['/x']},
     {event: 'RESPONSE', args: ['resp-230']},

@@ -1,5 +1,5 @@
 import test from 'ava'
-import {fetchBegin as e} from '../src/main'
+import { fetchBegin as e } from '../src/main'
 import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
 
@@ -16,7 +16,7 @@ test(t => {
   e(req, obs).subscribe(x => out.push(x))
   sh.start()
 
-  t.same(out, [
+  t.deepEqual(out, [
     {event: 'REQUEST', args: ['req0']},
     {event: 'REQUEST', args: ['req0']}
   ])

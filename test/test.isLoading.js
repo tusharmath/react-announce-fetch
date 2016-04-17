@@ -1,6 +1,6 @@
 import f from '../src/isLoading'
 import test from 'ava'
-import {ReactiveTest, TestScheduler} from 'rx'
+import { ReactiveTest, TestScheduler } from 'rx'
 const {onNext} = ReactiveTest
 
 test(t => {
@@ -12,7 +12,7 @@ test(t => {
   )
   f(ev0).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, [true, false])
+  t.deepEqual(out, [true, false])
 })
 
 test('multiple:overlapping', t => {
@@ -28,7 +28,7 @@ test('multiple:overlapping', t => {
   )
   f(ev0, ev1).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, [true, false])
+  t.deepEqual(out, [true, false])
 })
 
 test('multiple:exclusive', t => {
@@ -44,5 +44,5 @@ test('multiple:exclusive', t => {
   )
   f(ev0, ev1).subscribe(x => out.push(x))
   sh.start()
-  t.same(out, [true, false, true, false])
+  t.deepEqual(out, [true, false, true, false])
 })

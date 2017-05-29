@@ -1,4 +1,6 @@
 # react-announce-fetch
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/tusharmath/react-announce-fetch.svg)](https://greenkeeper.io/)
 [![Build Status][travis-svg]][travis]
 [![npm][npm-svg]][npm]
 [![semantic-release][semantic-release-svg]][semantic-release]
